@@ -2,12 +2,14 @@
 
 ## Team Members
 
-- Alice
-- Bob
+- Joe
+- chris
+- Tony
+- Max
 
 ## Core Functions
 
-1. Upload Photo (Alice)
+1. Upload Photo (someone)
 2. ...
 
 ## UI Design
