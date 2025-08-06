@@ -16,4 +16,7 @@
 
 ## References
 
-CLick : [Useful.md](public\Useful)
+CLick : [Useful.md](public/Useful.md)
+
+## VS Code extension recommend
+click : [extension](public/extension.md)
