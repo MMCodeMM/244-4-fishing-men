@@ -4,13 +4,46 @@
 <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home Page</title>
- 
- </head>
+  <link rel="stylesheet" href="styles.css" />
+</head>
 <body>
-  <h1>Welcome to the Home Page</h1>
-  <p>This is a simple HTML page served by Express.</p>
- </body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <img src="/public/fishingman_logo.png" alt="Logo" style="height: 80px;">
+            </div>
+            <div class="auth-buttons">
+                <button onclick="location.href='register.html'">會員登記</button>
+                <button onclick="location.href='login.html'">Login</button>
+            </div>
+        </div>
 
+        <!-- Navigation -->
+        <div class="navigation">
+            <div class="nav-buttons">
+                <button onclick="location.href='map.html'">地圖</button>
+                <button onclick="location.href='search.html'">搜尋</button>
+                <button onclick="location.href='my_album.html'">我的圖鑑</button>
+            </div>
+        </div>
 
-
+        <!-- Search History -->
+        <div class="search-history">
+            <h3>人氣搜尋</h3>
+            <ul class="search-history-list">
+                <li><img src="fish-a.png" alt="魚類A"></li>
+                <li><img src="fish-b.png" alt="魚類B"></li>
+                <li><img src="fish-c.png" alt="魚類C"></li>
+                <li><img src="fish-d.png" alt="魚類D"></li>
+                <li><img src="fish-e.png" alt="魚類E"></li>
+                <li><img src="fish-f.png" alt="魚類F"></li>
+                <li><img src="fish-g.png" alt="魚類G"></li>
+                <li><img src="fish-h.png" alt="魚類H"></li>
+                <li><img src="fish-i.png" alt="魚類I"></li>
+                <li><img src="fish-j.png" alt="魚類J"></li>
+            </ul>
+        </div>
+    </div>
+</body>
 </html>

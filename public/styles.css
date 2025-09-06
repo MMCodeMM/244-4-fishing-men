@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #A1C6E7; /* 粉藍色背景 */
+}
+.container {
+    max-width: 1200px; /* 最大寬度 */
+    margin: 0 auto; /* 居中顯示 */
+    background-color: #A1C6E7; /* 粉藍色背景 */
+    padding: 20px; /* 內邊距 */
+    box-sizing: border-box; /* 包含內邊距和邊框的寬度計算 */
+}
+.header, .navigation, .search-history {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 2px solid #A1C6E7; /* 粉藍色邊框 */
+    background-color: #A1C6E7; /* 粉藍色背景 */
+}
+.header {
+    height: auto;
+}
+.navigation {
+    height: auto;
+    justify-content: center; /* Center the buttons */
+}
+.search-history {
+    flex-direction: column;
+    padding: 20px;
+    background-color: #A1C6E7; /* 粉藍色背景 */
+}
+.logo {
+    flex: 1;
+}
+.auth-buttons {
+    flex: 1;
+    text-align: right;
+}
+.nav-buttons {
+    display: flex; /* Use flexbox for alignment */
+    justify-content: space-around; /* Space out buttons evenly */
+    flex: 1;
+}
+button {
+    padding: 10px 20px;
+    border: 3px solid rgb(71, 30, 153); /* 按鈕邊框 */
+    background-color: white; /* 白色背景 */
+    color: black; /* 黑色字 */
+    cursor: pointer;
+    border-radius: 50px; /* 橢圓形 */
+    flex: 1; /* Make buttons the same size */
+    margin: 0 5px; /* Add some margin between buttons */
+    min-width: 100px; /* 最小寬度 */
+}
+button:hover {
+    background-color: #f0f0f0; /* Hover效果 */
+}
+.search-history-list {
+    display: flex; /* Use flexbox for horizontal layout */
+    flex-wrap: wrap; /* Allow wrapping to next line if needed */
+    padding: 0;
+    list-style-type: none;
+}
+.search-history-list li {
+    margin: 5px;
+}
+.search-history-list img {
+    height: 100px; /* Set image height */
+    width: auto; /* Maintain aspect ratio */
+    border-radius: 5px; /* Optional: rounded corners */
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .nav-buttons {
+        flex-direction: column; /* 手機上按鈕垂直排列 */
+        align-items: center; /* 按鈕居中 */
+    }
+    button {
+        width: 100%; /* 按鈕在手機上寬度100% */
+        margin: 5px 0; /* 上下邊距 */
+    }
+}
