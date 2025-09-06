@@ -10,7 +10,7 @@
 ## Core Functions
 
 1. Upload Photo (someone)
-2. ...
+2. other functions
 
 ## UI Design
 
