@@ -11,7 +11,7 @@ body {
     padding: 20px; /* 內邊距 */
     box-sizing: border-box; /* 包含內邊距和邊框的寬度計算 */
 }
-.header, .navigation, .search-history {
+.header, .navigation , .search-history {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,6 +32,7 @@ body {
     background-color: #A1C6E7; /* 粉藍色背景 */
 }
 .logo {
+    max-width:100px;
     flex: 1;
 }
 .auth-buttons {
@@ -39,8 +40,7 @@ body {
     text-align: right;
 }
 .nav-buttons {
-    display: flex; /* Use flexbox for alignment */
-    justify-content: space-around; /* Space out buttons evenly */
+    text-align: left;
     flex: 1;
 }
 button {
