@@ -82,4 +82,31 @@ button:hover {
         width: 100%; /* 按鈕在手機上寬度100% */
         margin: 5px 0; /* 上下邊距 */
     }
+    .registration-form {
+        width: 90%; /* 手機上表單寬度90% */
+    }
 }
+  .registration-form {
+    max-width: 400px;        /* 限制表單寬度 */
+    margin: 50px auto;       /* 上下 50px，左右自動置中 */
+    padding: 20px;           /* 表單內部留白 */
+    border: 1px solid #ccc;  /* 外框 */
+    border-radius: 8px;      /* 圓角 */
+    background: #f9f9f9;     /* 淡灰背景 */
+  }
+
+  .registration-form form {
+    display: flex;
+    flex-direction: column;  /* 垂直排版 */
+    gap: 10px;               /* 各欄位之間有間距 */
+  }
+
+  .registration-form input,
+  .registration-form button {
+    padding: 8px;
+  }
+
+  .registration-form button {
+    margin-top: 10px;
+    cursor: pointer;
+  }
