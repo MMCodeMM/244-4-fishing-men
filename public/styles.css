@@ -110,3 +110,14 @@ button:hover {
     margin-top: 10px;
     cursor: pointer;
   }
+.container #loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;  
+}

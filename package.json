@@ -11,7 +11,8 @@
     "build": "run-p build:*",
     "build:server": "tsc",
     "build:client": "esbuild client/index.ts --bundle --outfile=dist/client/index.js",
-"build:client:watch": "esbuild client/index.ts --bundle --outfile=dist/client/index.js --watch"
+    "build:client:watch": "esbuild client/index.ts --bundle --outfile=dist/client/index.js --watch",
+    "build:login": "esbuild client/login.ts --bundle --outfile=dist/client/login.js"
   },
   "repository": {
     "type": "git",
