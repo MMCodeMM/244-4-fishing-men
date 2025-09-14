@@ -1,6 +1,5 @@
 import { renderHeaderAndNav } from './sharedHeader';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const onlyLogo = document.body.dataset.header === 'logo-only';
-  renderHeaderAndNav(!onlyLogo); 
+  renderHeaderAndNav(false); 
 });
