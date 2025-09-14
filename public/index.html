@@ -4,16 +4,48 @@
 <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home Page</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="slider.css" />
+	<link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="slider.css" />
 </head>
 <body>
     <div class="container">
         <div class="header"></div>
-        <div class="slider">
-	
+        <div id="slider-container">
+            <input type="radio" name="position" class="slider-radio" />
+            <input type="radio" name="position" class="slider-radio" />
+            <input type="radio" name="position" class="slider-radio" checked/>
+            <input type="radio" name="position" class="slider-radio" />
+            <input type="radio" name="position" class="slider-radio" />
+            <main id="carousel">
+                <div class="item">
+                    <img src="data/fish/005-001.png">
+                    <h3 class="name">005-001</h3>
+                    <p class="description">description</p>
+                </div>
+                <div class="item">
+                    <img src="data/fish/005-004.png">
+                    <h3 class="name">005-004</h3>
+                    <p class="description">description</p>
+                </div>
+                <div class="item">
+                    <img src="data/fish/005-011.png">
+                    <h3 class="name">005-011</h3>
+                    <p class="description">description</p>
+                </div>
+                <div class="item">
+                    <img src="data/fish/005-013.png">
+                    <h3 class="name">005-013</h3>
+                    <p class="description">description</p>
+                </div>
+                <div class="item">
+                    <img src="data/fish/005-023.png">
+                    <h3 class="name">005-023</h3>
+                    <p class="description">description</p>
+                </div>
+            </main>
+        </div>
+
     </div>
-    <script src="/dist/client/index.js"></script>
-    <script src="/dist/client/slider.js"></script>
+		<script src="/dist/client/index.js"></script>
 </body>
 </html>
