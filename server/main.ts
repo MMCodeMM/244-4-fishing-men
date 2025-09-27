@@ -1,14 +1,33 @@
 
 
+
 import express from 'express'
 import { print } from 'listening-on'
-import { users, User } from './data'
+import { users, User, fishs } from './data'
+import fs from 'fs'
+import path from 'path'
 
 let app = express()
+
+// 伺服器啟動時載入 fish.json
+try {
+  const fishData = fs.readFileSync(path.join(__dirname, 'fish.json'), 'utf-8');
+  fishs.push(...JSON.parse(fishData));
+} catch (e) {
+  console.error('載入 fish.json 失敗:', e);
+}
 
 app.use('/dist/client', express.static('dist/client'))
 app.use(express.static('public'))
 app.use(express.json())
+
+app.get('/api/fish', (req, res) => {
+  res.json(fishs);
+});
+
+app.get('/api/users', (req, res) => {
+  res.json(users);
+});
 
 app.get('/', (req, res) => {
   res.write('Welcome')
