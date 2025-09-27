@@ -5,7 +5,7 @@ export function renderHeaderAndNav(showNav: boolean = true) {
   let html = `
     <div class="header">
       <div class="logo">
-        <img src="/public/fishingman_logo.png" alt="Logo" style="height: 80px;" onclick="location.href='index.html'" onmouseover="this.style.cursor='pointer'">
+        <img src="/fishingman_logo.png" alt="Logo" style="height: 80px;" onclick="location.href='index.html'" onmouseover="this.style.cursor='pointer'">
       </div>
     </div>
   `;

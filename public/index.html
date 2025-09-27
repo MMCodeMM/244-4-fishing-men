@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
- <head>
-<meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home Page</title>
-	<link rel="stylesheet" href="styles.css" />
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="slider.css" />
 </head>
+
 <body>
     <div class="container">
         <div class="header"></div>
         <div id="slider-container">
-            <input type="radio" name="position" class="slider-radio" />
-            <input type="radio" name="position" class="slider-radio" />
-            <input type="radio" name="position" class="slider-radio" checked/>
-            <input type="radio" name="position" class="slider-radio" />
-            <input type="radio" name="position" class="slider-radio" />
+            <div class="pagination-list">
+                <input type="radio" name="position" class="slider-radio" />
+                <input type="radio" name="position" class="slider-radio" />
+                <input type="radio" name="position" class="slider-radio" checked />
+                <input type="radio" name="position" class="slider-radio" />
+                <input type="radio" name="position" class="slider-radio" />
+            </div>
             <main id="carousel">
                 <div class="item">
                     <img src="data/fish/005-001.png">
@@ -46,6 +50,7 @@
         </div>
 
     </div>
-		<script src="/dist/client/index.js"></script>
+    <script src="/dist/client/index.js"></script>
 </body>
+
 </html>

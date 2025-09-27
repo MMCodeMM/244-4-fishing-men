@@ -25,7 +25,24 @@
         <input type="file" accept="image/*" style="display:none" id="fileInput">
         <button type="button" onclick="document.getElementById('fileInput').click()">選擇圖片</button>
       </label>
+        <div style="display:inline-block; vertical-align:middle; margin-left:20px;">
+          <button type="button" onclick="searchByName()">名稱搜尋</button>
+          <input type="text" id="searchNameInput" placeholder="請輸入名稱" style="padding:8px; width:200px;">
+        </div>
     </div>
+      <div style="text-align:center; margin-bottom:30px;">
+        <!-- 名稱搜尋已移至選擇圖片按鈕旁 -->
+      <script>
+        function searchByName() {
+          const name = document.getElementById('searchNameInput').value.trim();
+          if (!name) {
+            alert('請輸入名稱');
+            return;
+          }
+          // TODO: 實作搜尋邏輯，可用 fetch/XHR 與後端互動
+          alert('搜尋名稱：' + name);
+        }
+      </script>
     <script src="/dist/client/index.js"></script>
 </body>
 </html>
