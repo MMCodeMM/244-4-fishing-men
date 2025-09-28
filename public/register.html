@@ -11,21 +11,19 @@
       <div class="registration-form">
         <h2 style="text-align: center">會員註冊</h2>
 
-        <form id="register">
-          <label for="username">Username:</label>
-          <input type="text" id="username" name="username" required />
+    <form action="/register" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
 
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" required />
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
 
-          <label for="password">Password:</label>
-          <input type="password" id="password" name="password" required />
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
 
-          <button type="submit">Register</button>
-        </form>
-      </div>
+        <button type="submit">Register</button>
+    </form>
     </div>
-
     <script src="/dist/client/index.js"></script>
     <script>
       const frm = document.getElementById("register");

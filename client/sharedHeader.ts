@@ -15,7 +15,7 @@ export function renderHeaderAndNav(showNav: boolean = true) {
         <div class="nav-buttons">
           <button onclick="location.href='search.html'">搜尋</button>
           <button onclick="location.href='map.html'">地圖</button>
-          <button onclick="location.href='my_album.html'">圖鑑</button>
+          <button onclick="location.href='album.html'">圖鑑</button>
         </div>
         <div class="auth-buttons">
           <button onclick="location.href='my_album.html'">我的圖鑑</button>
