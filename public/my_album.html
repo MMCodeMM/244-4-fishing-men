@@ -14,22 +14,30 @@
 
         .image-container img {
             width: 100%; /* 設定圖片寬度 */
-            height: 100%;   /* 設定圖片高度 */
-            margin: 0px;
+            height: auto; /* 自動調整高度 */
+            margin: 0;
+        }
+
+        .upload-section {
+            border: 1px solid gray;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f0f0f0;
         }
     </style>
 </head>
 <body>
     <div class="container"></div>
 
-    <div style="border: 2px solid rgb(71, 31, 153); width: 790px; height: 800px; margin: 20px auto; padding: 10px; box-sizing: border-box;">
-        <div style="width: 30%; height: 30%; border: 1px solid gray; display: flex; flex-direction: column; align-items: center; background-color: #f0f0f0;">
-    
+    <div style="border: 2px solid rgb(71, 31, 153); width: 790px; margin: 20px auto; padding: 10px; box-sizing: border-box;">
+
+
+        <div id="uploadArea" class="upload-section">
             <div style="display: flex; align-items: center; margin-top: 10px;">
                 <input type="file" id="imageUpload" style="display: none;" accept="image/*">
                 <button id="addImageButton" style="border: none; background-color: #4CAF50; color: white; padding: 5px 10px; cursor: pointer; margin-left: 10px;">
                     上傳圖片
-
+                </button>
                 <button id="submitImageButton" style="border: none; background-color: #007BFF; color: white; padding: 5px 10px; cursor: pointer; margin-left: 10px;">
                     提交相片
                 </button>
@@ -38,6 +46,8 @@
                 <img id="uploadedImage" src="" alt="Uploaded Image" style="display:none;">
             </div>
         </div>
+
+        <div id="newImageContainer"></div>
     </div>
 
     <script src="/dist/client/index.js"></script>
@@ -59,7 +69,10 @@
                     img.src = e.target.result;
                     img.style.display = 'block'; // 顯示圖片
                     uploadedImageData = e.target.result; // 保存圖片數據
-                }
+
+                    // 新增另一個上傳區域
+                   
+                };
                 
                 reader.readAsDataURL(file); // 將文件讀取為數據URL
             }
@@ -67,12 +80,47 @@
 
         document.getElementById('submitImageButton').addEventListener('click', function() {
             if (uploadedImageData) {
-                alert('相片已提交！'); // 在這裡可以替換為實際的提交邏輯
+                alert('相片已提交！'); // 提示用戶相片已提交
                 // 這裡可以添加 AJAX 請求或其他提交邏輯
             } else {
-                alert('請先上傳一張圖片！');
-            }
+                alert('請先上傳圖片');
+            } addNewUploadSection();
         });
+
+        function addNewUploadSection() {
+            const newSection = document.createElement('div');
+            newSection.className = 'upload-section';
+            newSection.innerHTML = `
+                <div style="display: flex; align-items: center; margin-top: 10px;">
+                    <input type="file" accept="image/*" style="display: none;" onchange="handleNewImageUpload(event)">
+                    <button style="border: none; background-color: #4CAF50; color: white; padding: 5px 10px; cursor: pointer; margin-left: 10px;" onclick="this.previousElementSibling.click();">
+                        上傳新圖片
+                    </button>
+                    <button style="border: none; background-color: #007BFF; color: white; padding: 5px 10px; cursor: pointer; margin-left: 10px;">
+                        提交新相片
+                    </button>
+                </div>
+                <div class="image-container">
+                    <img src="" alt="Uploaded Image" style="display:none;">
+                </div>
+            `;
+            document.getElementById('newImageContainer').appendChild(newSection);
+        }
+
+        function handleNewImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                const img = event.target.nextElementSibling.nextElementSibling.children[0];
+
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    img.style.display = 'block'; // 顯示圖片
+                };
+                
+                reader.readAsDataURL(file); // 將文件讀取為數據URL
+            }
+        }
     </script>
 </body>
 </html>
