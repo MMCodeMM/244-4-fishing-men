@@ -5,10 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Album</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .image-container img {
+            width: 100px; /* 設定圖片寬度 */
+            height: 100px; /* 設定圖片高度 */
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container"></div>
 
+    <div style="border: 2px solid rgb(71, 31, 153); width: 790px; height: 800px; margin: 20px auto; padding: 10px; box-sizing: border-box;">
+        <h2 style="text-align: center;"></h2>
+        <div style="width: 30%; height: 30%; border: 1px solid gray; display: flex; flex-direction: column; align-items: center; background-color: #f0f0f0;">
+            <span style="color: gray; background-color: #e0f7fa; padding: 5px; border-radius: 5px;"> </span>
+            <div style="display: flex; align-items: center; margin-top: 10px;">
+                <input type="file" id="imageUpload" style="display: none;" accept="image/*">
+                <button id="addImageButton" style="border: none; background-color: #4CAF50; color: white; padding: 5px 10px; cursor: pointer; margin-left: 10px;">
+                    上傳圖片
+                </button>
+            </div>
+            <div class="image-container" id="imageContainer"></div> <!-- 用於顯示已上傳的圖片 -->
+        </div>
+    </div>
+
     <script src="/dist/client/index.js"></script>
+    <script>
+        document.getElementById('addImageButton').addEventListener('click', function() {
+            document.getElementById('imageUpload').click(); // 點擊按鈕時觸發文件選擇
+        });
+
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // 創建一個新的img元素並顯示上傳的圖片
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    document.getElementById('imageContainer').appendChild(img);
+                }
+                
+                reader.readAsDataURL(file); // 將文件讀取為數據URL
+            }
+        });
+    </script>
 </body>
 </html>
