@@ -27,7 +27,7 @@
       </label>
         <div style="display:inline-block; vertical-align:middle; margin-left:20px;">
           <button type="button" onclick="searchByName()">名稱搜尋</button>
-          <input type="text" id="searchNameInput" placeholder="請輸入名稱" style="padding:8px; width:200px;">
+          <input type="text" id="searchNameInput" placeholder="請輸入名稱" style="padding:8px; width:200px;" onkeydown="if(event.key==='Enter'){searchByName();}">
         </div>
     </div>
       <div id="searchResult" style="text-align:center; margin-top:30px;"></div>
