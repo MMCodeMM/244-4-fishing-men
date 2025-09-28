@@ -30,7 +30,7 @@
     <div class="container"></div>
 
     <div style="border: 2px solid rgb(71, 31, 153); width: 790px; margin: 20px auto; padding: 10px; box-sizing: border-box;">
-
+        <h2 style="text-align: center;">我的相冊</h2>
 
         <div id="uploadArea" class="upload-section">
             <div style="display: flex; align-items: center; margin-top: 10px;">
@@ -69,9 +69,6 @@
                     img.src = e.target.result;
                     img.style.display = 'block'; // 顯示圖片
                     uploadedImageData = e.target.result; // 保存圖片數據
-
-                    // 新增另一個上傳區域
-                   
                 };
                 
                 reader.readAsDataURL(file); // 將文件讀取為數據URL
@@ -82,9 +79,12 @@
             if (uploadedImageData) {
                 alert('相片已提交！'); // 提示用戶相片已提交
                 // 這裡可以添加 AJAX 請求或其他提交邏輯
+                
+                // 成功提交後，顯示新的上傳區域
+                addNewUploadSection();
             } else {
-                alert('請先上傳圖片');
-            } addNewUploadSection();
+                alert('請先上傳一張圖片！');
+            }
         });
 
         function addNewUploadSection() {
