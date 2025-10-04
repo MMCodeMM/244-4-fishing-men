@@ -1,6 +1,10 @@
 import { Router } from "express";
 import {existsSync , readFileSync , writeFileSync} from "fs";
 
+let router = Router()
+
+
+
 export type userData ={
     user_name: string;
     pass : number;

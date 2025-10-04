@@ -1,11 +1,11 @@
-
-
-
 import express from 'express'
 import { print } from 'listening-on'
 import { users, User, fishs } from './data'
 import fs from 'fs'
 import path from 'path'
+import * as login from './login' 
+import * as register from './register'
+
 
 let app = express()
 
