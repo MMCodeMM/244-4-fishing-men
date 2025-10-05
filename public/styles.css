@@ -87,28 +87,57 @@ button:hover {
     }
 }
   .registration-form {
-    max-width: 400px;        /* 限制表單寬度 */
+    max-width: 500px;        /* 限制表單寬度 */
     margin: 50px auto;       /* 上下 50px，左右自動置中 */
-    padding: 20px;           /* 表單內部留白 */
+    padding: 25px;           /* 表單內部留白 */
     border: 1px solid #ccc;  /* 外框 */
     border-radius: 8px;      /* 圓角 */
     background: #f9f9f9;     /* 淡灰背景 */
+    /* 所有欄位垂直排列 */
+    display: flex;  
+    flex-direction: column;
+    gap: 15px;               /* 欄位間距 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
+    box-sizing: border-box;  /* 包含內邊距和邊框的寬度計算 */
+    font-size: 16px;         /* 字體大小 */
+    color: #333;             /* 字體顏色 */
+    /* 使用者體驗優化 */
   }
 
-  .registration-form form {
+  .registration-form .field {
+    display: flex;           /* 使用 Flexbox */
+    flex-direction: column;  /* 垂直排列和上下並排 */
+    align-items: center; /* 罝中 */
+    gap: 5px;               /* 標籤與輸入框間距 */
+    width: 100%;            /* 滿寬 */
+    box-sizing: border-box; /* 包含內邊距和邊框的寬度計算 */
+
+  }
+
+  .registration-form input{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box; /* 包含內邊距和邊框的寬度計算 */
+  }
+  .registration-form .buttons {
+    /* 罝中 */
     display: flex;
-    flex-direction: column;  /* 垂直排版 */
-    gap: 10px;               /* 各欄位之間有間距 */
+    justify-content: center;
+    gap: 10px;
   }
 
-  .registration-form input,
-  .registration-form button {
-    padding: 8px;
-  }
-
-  .registration-form button {
+  .registration-form .buttons button {
     margin-top: 10px;
     cursor: pointer;
+  }
+
+  #resultMessage {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 15px;
+    color: red; /* 錯誤訊息顏色 */
   }
 .container #loginForm {
     display: flex;

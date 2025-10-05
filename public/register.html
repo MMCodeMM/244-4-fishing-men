@@ -5,57 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register</title>
     <link rel="stylesheet" href="styles.css" />
-    
   </head>
   <body data-header="logo-only">
     <div class="container">
-     <div class="registration-form">
+      <div class="registration-form">
         <h2 style="text-align: center">會員註冊</h2>
 
-      <div class="field" id="usernameField">
-        <label for="username" >Username:</label>
-        <input type="text" id="usernameInput"  required>
-      </div> 
-      <div class="field" id="emailField">
-        <label for="email" >Email:</label>
-        <input type="email" id="emailInput"  required>
-      </div>
-      <div class="field" id="passwordField">
-        <label for="password" >Password:</label>
-        <input type="password" id="passwordInput" required>
-      </div>
-      <div id="confrimpasswordField">
-        <label for="confrimPassword">Confrim Password :</label>
-        <input type="password" id="confrimPasswordInput" required>
-      </div>
+        <div class="field" id="usernameField">
+          <label>
+            <span>Username:</span>
+            <input type="text" id="usernameInput" />
+          </label>
+        </div>
+        <div class="field" id="emailField">
+          <label>
+            <span>Email:</span>
+            <input type="email" id="emailInput" />
+          </label>
+        </div>
+        <div class="field" id="passwordField">
+          <label>
+            <span>Password:</span>
+            <input type="password" id="passwordInput" />
+          </label>
+        </div>
+        <div id="confirmpasswordField">
+          <label for="confirmPassword">
+            <span>Confrim Password :</span>
+            <input type="password" id="confirmPasswordInput" />
+          </label>
+        </div>
         <p id="resultMessage"></p>
 
-      <div class="buttons">
-        <button id="registerButton" onclick="subRegister()">Register</button>
-        <button id="loginButton" onclick="submitLogin()">Login</button>
+        <div class="buttons">
+          <button id="registerButton" onclick="subRegister()">Register</button>
+          <button id="loginButton" onclick="submitLogin()">Login</button>
+        </div>
       </div>
-
-      
     </div>
-    
+
     <script src="/dist/client/index.js"></script>
     <script>
-      
-      async function subRegister(){
-        let username = usernameInput.value
-        let email = emailInput.value
-        let password = passwordInput.value
-        let confrimPassword = confrimPassword.value
+      async function subRegister() {
+        let username = usernameInput.value;
+        let email = emailInput.value;
+        let password = passwordInput.value;
+        let confirmPassword = confirmPasswordInput.value;
 
-        resultMessage.classList.remove('success')
+        resultMessage.classList.remove("success");
 
         if (username.length < 3) {
-          usernameField.classList.add('error')
+          usernameField.classList.add("error");
           resultMessage.textContent =
-            'Username must be at least 3 characters long'
-          return
+            "Username must be at least 3 characters long";
+          return;
         }
-        usernameField.classList.remove('error')
+        usernameField.classList.remove("error");
+        if (!email.includes("@")) {
+          emailField.classList.add("error");
+          resultMessage.textContent = "email must contain @ ";
+          return;
+        }
+        emailField.classList.remove("error");
       }
     </script>
   </body>
