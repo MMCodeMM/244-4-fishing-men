@@ -29,7 +29,7 @@
             <input type="password" id="passwordInput" />
           </label>
         </div>
-        <div id="confirmpasswordField">
+        <div id="confirmPasswordField">
           <label for="confirmPassword">
             <span>Confrim Password :</span>
             <input type="password" id="confirmPasswordInput" />
@@ -61,16 +61,35 @@
           return;
         }
         usernameField.classList.remove("error");
+
         if (!email.includes("@")) {
           emailField.classList.add("error");
           resultMessage.textContent = "email must contain @ ";
           return;
         }
         emailField.classList.remove("error");
+
+        passwordField.classList.remove("error");
+        confirmPasswordField.classList.remove("error");
+
         if (password.length < 4) {
           passwordField.classList.add("error");
           resultMessage.textContent =
             "Password must be at least 4 characters long";
+          return;
+        }
+        passwordField.classList.remove("error");
+
+        if (password !== confirmPassword) {
+          passwordField.classList.add("error");
+          confirmPasswordField.classList.add("error");
+          resultMessage.textContent = "password not match with confirmpassword";
+          return;
+        }
+        if (password === confirmPassword) {
+          resultMessage.style.color = "green";
+          resultMessage.textContent = "✅ Password success!";
+          return;
         }
       }
     </script>
