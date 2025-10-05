@@ -67,6 +67,11 @@
           return;
         }
         emailField.classList.remove("error");
+        if (password.length < 4) {
+          passwordField.classList.add("error");
+          resultMessage.textContent =
+            "Password must be at least 4 characters long";
+        }
       }
     </script>
   </body>
