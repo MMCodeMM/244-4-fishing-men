@@ -15,3 +15,14 @@
     ]//rename the shortcut.
 11. npx tsc // to compile your ts file to js file.
 12. npm i listening-on // to check your server is running or not.
+13. tsconfig.json  // input the following codes. 
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "outDir": "./dist",
+        "rootDir": "./",
+        "strict": true,
+        "esModuleInterop": true
+    },
+}
