@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // 載入 fish.json 並隨機選取 5 筆資料顯示在 carousel
   fetch('/api/fish')
     .then(res => res.json())
-    .then((fishList) => {
+    .then((fishList: any[]) => {
       // 隨機抽取 5 筆
       const shuffled = fishList.sort(() => Math.random() - 0.5);
       const selected = shuffled.slice(0, 5);
       const carousel = document.getElementById('carousel');
       if (carousel) {
-        carousel.innerHTML = selected.map(fish => `
+        carousel.innerHTML = selected.map((fish: any) => `
           <div class="item">
             <img src="${fish.image}" alt="${fish.name}">
             <h3 class="name">${fish.name}</h3>
