@@ -19,8 +19,7 @@ export function renderHeaderAndNav(showNav: boolean = true) {
         </div>
         <div class="auth-buttons">
           <button onclick="location.href='my_album.html'">我的圖鑑</button>
-          <button onclick="location.href='login.html'">登入</button>
-          <button onclick="location.href='register.html'">注冊</button>
+          <button onclick="location.href='register.html'">注冊/登入</button>
         </div>
       </div>
     `;
