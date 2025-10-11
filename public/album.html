@@ -71,41 +71,6 @@
     <button id="loadMoreBtn" class="load-more">Load More</button>
 
     <script src="/dist/client/index.js"></script>
-    
-    <script>
-        // 直接顯示API的所有魚種
-        async function displayAllFish() {
-            try {
-                // 使用您原有的API取得所有魚種
-                const res = await fetch('/api/fish');
-                const fishList = await res.json();
-                
-                const container = document.getElementById('photoContainer');
-                
-                // 清空容器
-                container.innerHTML = '';
-                
-                // 顯示所有魚種
-                fishList.forEach(fish => {
-                    const photoItem = document.createElement('div');
-                    photoItem.className = 'photo-item';
-                    photoItem.innerHTML = `
-                        <img src="${fish.image}" alt="${fish.name}">
-                        <div class="photo-title">${fish.name}</div>
-                        <div class="photo-description">${fish.description}</div>
-                    `;
-                    container.appendChild(photoItem);
-                });
-                
-                console.log('顯示所有魚種:', fishList);
-                
-            } catch (error) {
-                console.error('無法取得魚種資料:', error);
-            }
-        }
-
-        // 直接執行 - 顯示所有魚
-        displayAllFish();
-    </script>
+    <script src="/dist/client/album.js"></script>
 </body>
 </html>

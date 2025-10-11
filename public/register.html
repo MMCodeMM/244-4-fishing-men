@@ -31,7 +31,7 @@
         </div>
         <div id="confirmPasswordField">
           <label for="confirmPassword">
-            <span>Confrim Password :</span>
+            <span>Confirm Password :</span>
             <input type="password" id="confirmPasswordInput" />
           </label>
         </div>
@@ -45,53 +45,6 @@
     </div>
 
     <script src="/dist/client/index.js"></script>
-    <script>
-      async function subRegister() {
-        let username = usernameInput.value;
-        let email = emailInput.value;
-        let password = passwordInput.value;
-        let confirmPassword = confirmPasswordInput.value;
-
-        resultMessage.classList.remove("success");
-
-        if (username.length < 3) {
-          usernameField.classList.add("error");
-          resultMessage.textContent =
-            "Username must be at least 3 characters long";
-          return;
-        }
-        usernameField.classList.remove("error");
-
-        if (!email.includes("@")) {
-          emailField.classList.add("error");
-          resultMessage.textContent = "email must contain @ ";
-          return;
-        }
-        emailField.classList.remove("error");
-
-        passwordField.classList.remove("error");
-        confirmPasswordField.classList.remove("error");
-
-        if (password.length < 4) {
-          passwordField.classList.add("error");
-          resultMessage.textContent =
-            "Password must be at least 4 characters long";
-          return;
-        }
-        passwordField.classList.remove("error");
-
-        if (password !== confirmPassword) {
-          passwordField.classList.add("error");
-          confirmPasswordField.classList.add("error");
-          resultMessage.textContent = "password not match with confirmpassword";
-          return;
-        }
-        if (password === confirmPassword) {
-          resultMessage.style.color = "green";
-          resultMessage.textContent = "✅ Password success!";
-          return;
-        }
-      }
-    </script>
+    <script src="/dist/client/register.js"></script>
   </body>
 </html>
