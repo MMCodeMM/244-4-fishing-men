@@ -104,11 +104,10 @@
 
                     const title = document.createElement('div');
                     title.classList.add('photo-title');
-                    title.textContent = "Uploaded Image";
 
                     const description = document.createElement('div');
                     description.classList.add('photo-description');
-                    description.textContent = "Description for the image";
+                    description.textContent = 'submit data';
 
                     photoItem.appendChild(img);
                     photoItem.appendChild(title);
@@ -117,7 +116,7 @@
                 };
                 reader.readAsDataURL(file);
             } else {
-                alert('请先选择一张图片。');
+                alert('Choose an image to upload first.');
             }
         });
     </script>
