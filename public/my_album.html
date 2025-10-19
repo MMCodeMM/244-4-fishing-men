@@ -45,7 +45,19 @@
             padding: 10px;
             text-align: center;
         }
-        
+
+        .delete-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
         .photo-description {
             display: none;
             position: absolute;
@@ -104,19 +116,28 @@
 
                     const title = document.createElement('div');
                     title.classList.add('photo-title');
+                    title.textContent = "";
 
                     const description = document.createElement('div');
                     description.classList.add('photo-description');
-                    description.textContent = 'submit data';
+                    description.textContent = "";
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.textContent = 'X';
+                    deleteButton.onclick = function() {
+                        photoGrid.removeChild(photoItem);
+                    };
 
                     photoItem.appendChild(img);
                     photoItem.appendChild(title);
                     photoItem.appendChild(description);
+                    photoItem.appendChild(deleteButton);
                     photoGrid.appendChild(photoItem);
                 };
                 reader.readAsDataURL(file);
             } else {
-                alert('Choose an image to upload first.');
+                alert('choose a file first!');
             }
         });
     </script>
