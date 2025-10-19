@@ -73,6 +73,16 @@
         .photo-item:hover .photo-description {
             display: block;
         }
+
+        .upload-section {
+            display: flex;
+            justify-content: center; /* 使内容水平居中 */
+            margin-top: 10px;
+        }
+
+        .upload-section button {
+            margin: 0 10px; /* 按钮之间的间距 */
+        }
     </style>
 </head>
 <body>
@@ -80,15 +90,13 @@
         <h2 style="text-align: center;">我的相冊</h2>
 
         <div id="uploadArea" class="upload-section">
-            <div style="display: flex; align-items: center; margin-top: 10px;">
-                <input type="file" id="imageUpload" style="display: none;" accept="image/*">
-                <button id="addImageButton" style="border: none; background-color: #4CAF50; color: white; padding: 5px 10px; cursor: pointer; margin-left: 10px;">
-                    上傳圖片
-                </button>
-                <button id="submitImageButton" style="border: none; background-color: #007BFF; color: white; padding: 5px 10px; cursor: pointer; margin-left: 10px;">
-                    提交相片
-                </button>
-            </div>
+            <input type="file" id="imageUpload" style="display: none;" accept="image/*">
+            <button id="addImageButton" style="border: none; background-color: #4CAF50; color: white; padding: 5px 10px; cursor: pointer;">
+                上傳圖片
+            </button>
+            <button id="submitImageButton" style="border: none; background-color: #007BFF; color: white; padding: 5px 10px; cursor: pointer;">
+                提交圖片
+            </button>
         </div>
 
         <div id="photoGrid" class="photo-grid"></div>
@@ -116,11 +124,11 @@
 
                     const title = document.createElement('div');
                     title.classList.add('photo-title');
-                    title.textContent = "";
+                    title.textContent = "Uploaded Image";
 
                     const description = document.createElement('div');
                     description.classList.add('photo-description');
-                    description.textContent = "";
+                    description.textContent = "Description for the image";
 
                     const deleteButton = document.createElement('button');
                     deleteButton.classList.add('delete-button');
