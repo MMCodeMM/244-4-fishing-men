@@ -3,7 +3,7 @@ import { findElement } from './utils';
 export function renderHeaderAndNav(showNav: boolean = true) {
   const container = findElement<HTMLDivElement>('.container');
   let html = `
-    <div class="header">
+    <div class="header" style="display: flex; justify-content: center; align-items: center; padding: 20px; background-color: #A1C6E7;">
       <div class="logo">
         <img src="/fishingman_logo.png" alt="Logo" style="height: 80px;" onclick="location.href='index.html'" onmouseover="this.style.cursor='pointer'">
       </div>
