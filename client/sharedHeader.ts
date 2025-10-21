@@ -37,7 +37,7 @@ export function renderHeaderAndNav(showNav: boolean = true) {
     // 根據登入狀態顯示不同的 auth-buttons
     const authButtonsHTML = currentUser ? `
       <div class="auth-buttons">
-        <span style="color: #333; margin-right: 10px;">歡迎, ${currentUser.username}</span>
+        <span style="color: white; margin-right: 10px; font-weight: bold; font-size: 1.5em; text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black;">歡迎, ${currentUser.username}</span>
         <button onclick="location.href='my_album.html'">我的圖鑑</button>
         <button onclick="logout()" style="background-color: #dc3545; color: white;">登出</button>
       </div>
