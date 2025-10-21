@@ -101,5 +101,89 @@ async function subRegister() {
   }
 }
 
+// 登入函數
+async function submitLogin() {
+  const usernameInput = document.getElementById('usernameInput') as HTMLInputElement;
+  const passwordInput = document.getElementById('passwordInput') as HTMLInputElement;
+  const resultMessage = document.getElementById('resultMessage') as HTMLElement;
+  const usernameField = document.getElementById('usernameField') as HTMLElement;
+  const passwordField = document.getElementById('passwordField') as HTMLElement;
+
+  let username = usernameInput.value.trim();
+  let password = passwordInput.value.trim();
+
+  // 清除之前的錯誤樣式
+  resultMessage.classList.remove("success");
+  usernameField.classList.remove("error");
+  passwordField.classList.remove("error");
+
+  // 基本驗證
+  if (!username) {
+    usernameField.classList.add("error");
+    resultMessage.textContent = "請輸入用戶名";
+    resultMessage.style.color = "red";
+    return;
+  }
+
+  if (!password) {
+    passwordField.classList.add("error");
+    resultMessage.textContent = "請輸入密碼";
+    resultMessage.style.color = "red";
+    return;
+  }
+
+  // 顯示載入中
+  resultMessage.textContent = "正在登入...";
+  resultMessage.style.color = "blue";
+
+  try {
+    const response = await fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      // 登入成功，儲存用戶資訊到 LocalStorage
+      localStorage.setItem('fishing_currentUser', JSON.stringify(result.user));
+      
+      resultMessage.style.color = "green";
+      resultMessage.textContent = `歡迎回來，${result.user.username}！`;
+      
+      // 1.5 秒後跳轉到主頁面
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+      
+    } else {
+      // 登入失敗
+      resultMessage.style.color = "red";
+      resultMessage.textContent = result.error;
+      
+      // 根據錯誤類型標記錯誤欄位
+      if (result.error.includes('帳號') || result.error.includes('用戶')) {
+        usernameField.classList.add("error");
+      }
+      if (result.error.includes('密碼')) {
+        passwordField.classList.add("error");
+      }
+      if (result.error.includes('帳號或密碼錯誤')) {
+        usernameField.classList.add("error");
+        passwordField.classList.add("error");
+      }
+    }
+
+  } catch (error) {
+    console.error('登入請求失敗:', error);
+    resultMessage.style.color = "red";
+    resultMessage.textContent = "網路錯誤，請檢查連線後重試";
+  }
+}
+
 // 將函數掛載到全域，讓 HTML 可以呼叫
 (window as any).subRegister = subRegister;
+(window as any).submitLogin = submitLogin;
