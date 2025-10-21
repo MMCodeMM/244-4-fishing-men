@@ -86,13 +86,55 @@ async function subRegister() {
       resultMessage.textContent = json.error;
     } else {
       resultMessage.style.color = "green";
-      resultMessage.textContent = "註冊成功！請前往登入。";
+      resultMessage.textContent = "註冊成功！正在自動登入...";
       
-      // 清空表單
-      usernameInput.value = '';
-      emailInput.value = '';
-      passwordInput.value = '';
-      confirmPasswordInput.value = '';
+      // 註冊成功後自動登入
+      try {
+        const loginResponse = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const loginResult = await loginResponse.json();
+
+        if (loginResult.success) {
+          // 自動登入成功，儲存用戶資訊到 LocalStorage
+          localStorage.setItem('fishing_currentUser', JSON.stringify(loginResult.user));
+          
+          resultMessage.style.color = "green";
+          resultMessage.textContent = `歡迎加入，${loginResult.user.username}！正在跳轉...`;
+          
+          // 2 秒後跳轉到主頁面
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 2000);
+          
+        } else {
+          // 註冊成功但自動登入失敗，提示手動登入
+          resultMessage.style.color = "orange";
+          resultMessage.textContent = "註冊成功！但自動登入失敗，請手動登入。";
+          
+          // 清空表單
+          usernameInput.value = '';
+          emailInput.value = '';
+          passwordInput.value = '';
+          confirmPasswordInput.value = '';
+        }
+        
+      } catch (autoLoginError) {
+        console.error('自動登入失敗:', autoLoginError);
+        resultMessage.style.color = "orange";
+        resultMessage.textContent = "註冊成功！但自動登入失敗，請手動登入。";
+        
+        // 清空表單
+        usernameInput.value = '';
+        emailInput.value = '';
+        passwordInput.value = '';
+        confirmPasswordInput.value = '';
+      }
     }
   } catch (error) {
     resultMessage.style.color = "red";
