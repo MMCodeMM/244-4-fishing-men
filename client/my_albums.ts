@@ -3,8 +3,26 @@
 // Global variable to store uploaded image data
 let uploadedImageData: string | null = null;
 
+// 檢查用戶是否已登入
+function checkLoginStatus(): boolean {
+    try {
+        const userData = localStorage.getItem('fishing_currentUser');
+        return userData !== null;
+    } catch (error) {
+        console.error('檢查登入狀態失敗:', error);
+        return false;
+    }
+}
+
 // Initialize the album functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // 檢查登入狀態
+    if (!checkLoginStatus()) {
+        alert('請先登入才能使用我的圖鑑功能！');
+        window.location.href = 'register.html';
+        return;
+    }
+    
     initializeAlbum();
 });
 

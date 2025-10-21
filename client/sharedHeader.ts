@@ -1,7 +1,30 @@
 import { findElement } from './utils';
 
+// 檢查用戶是否已登入
+function getCurrentUser() {
+  try {
+    const userData = localStorage.getItem('fishing_currentUser');
+    return userData ? JSON.parse(userData) : null;
+  } catch (error) {
+    console.error('讀取用戶資料失敗:', error);
+    return null;
+  }
+}
+
+// 登出函數
+function logout() {
+  localStorage.removeItem('fishing_currentUser');
+  alert('已成功登出！');
+  window.location.href = 'index.html';
+}
+
+// 將登出函數掛載到全域
+(window as any).logout = logout;
+
 export function renderHeaderAndNav(showNav: boolean = true) {
   const container = findElement<HTMLDivElement>('.container');
+  const currentUser = getCurrentUser();
+  
   let html = `
     <div class="header" style="display: flex; justify-content: center; align-items: center; padding: 20px; background-color: #A1C6E7;">
       <div class="logo">
@@ -9,7 +32,21 @@ export function renderHeaderAndNav(showNav: boolean = true) {
       </div>
     </div>
   `;
+  
   if (showNav) {
+    // 根據登入狀態顯示不同的 auth-buttons
+    const authButtonsHTML = currentUser ? `
+      <div class="auth-buttons">
+        <span style="color: #333; margin-right: 10px;">歡迎, ${currentUser.username}</span>
+        <button onclick="location.href='my_album.html'">我的圖鑑</button>
+        <button onclick="logout()" style="background-color: #dc3545; color: white;">登出</button>
+      </div>
+    ` : `
+      <div class="auth-buttons">
+        <button onclick="location.href='register.html'">注冊/登入</button>
+      </div>
+    `;
+    
     html += `
       <div class="navigation">
         <div class="nav-buttons">
@@ -17,10 +54,7 @@ export function renderHeaderAndNav(showNav: boolean = true) {
           <button onclick="location.href='map.html'">地圖</button>
           <button onclick="location.href='album.html'">圖鑑</button>
         </div>
-        <div class="auth-buttons">
-          <button onclick="location.href='my_album.html'">我的圖鑑</button>
-          <button onclick="location.href='register.html'">注冊/登入</button>
-        </div>
+        ${authButtonsHTML}
       </div>
     `;
   }
