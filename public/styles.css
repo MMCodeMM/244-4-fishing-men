@@ -106,20 +106,40 @@ button:hover {
 
   .registration-form .field {
     display: flex;           /* 使用 Flexbox */
-    flex-direction: column;  /* 垂直排列和上下並排 */
-    align-items: center; /* 罝中 */
-    gap: 5px;               /* 標籤與輸入框間距 */
+    flex-direction: column;  /* 垂直排列標籤和輸入框 */
+    align-items: stretch;    /* 拉伸到滿寬 */
+    gap: 8px;               /* 標籤與輸入框間距 */
     width: 100%;            /* 滿寬 */
     box-sizing: border-box; /* 包含內邊距和邊框的寬度計算 */
+  }
 
+  .registration-form .field label {
+    font-weight: bold;      /* 標籤粗體 */
+    color: #555;           /* 標籤顏色 */
+    font-size: 14px;       /* 標籤字體大小 */
+    margin-bottom: 4px;    /* 標籤下方間距 */
+    text-align: left;      /* 標籤左對齊 */
   }
 
   .registration-form input{
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
     font-size: 16px;
+    width: 100%;
     box-sizing: border-box; /* 包含內邊距和邊框的寬度計算 */
+    transition: border-color 0.3s ease; /* 邊框顏色過渡效果 */
+  }
+
+  .registration-form input:focus {
+    outline: none;
+    border-color: #007bff; /* 聚焦時邊框顏色 */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1); /* 聚焦時陰影 */
+  }
+
+  .registration-form input::placeholder {
+    color: #999;           /* placeholder 顏色 */
+    font-style: italic;    /* placeholder 斜體 */
   }
   .registration-form .buttons {
     /* 罝中 */
@@ -137,7 +157,25 @@ button:hover {
     text-align: center;
     font-weight: bold;
     margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
     color: red; /* 錯誤訊息顏色 */
+  }
+
+  /* 錯誤狀態樣式 */
+  .registration-form .field.error input {
+    border-color: #dc3545; /* 紅色邊框 */
+    background-color: #fff5f5; /* 淺紅色背景 */
+  }
+
+  .registration-form .field.error label {
+    color: #dc3545; /* 紅色標籤 */
+  }
+
+  /* 成功狀態樣式 */
+  .registration-form .field.success input {
+    border-color: #28a745; /* 綠色邊框 */
+    background-color: #f5fff5; /* 淺綠色背景 */
   }
 .container #loginForm {
     display: flex;

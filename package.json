@@ -37,6 +37,7 @@
   },
   "homepage": "https://github.com/MMCodeMM/244-4-fishing-men#readme",
   "dependencies": {
+    "d": "^1.0.2",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "listening-on": "^2.0.9",
