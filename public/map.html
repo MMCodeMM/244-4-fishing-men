@@ -49,10 +49,27 @@
   
 
         <div class="map">
-            <h3></h3>
+            <h3>釣魚地點地圖</h3>
+            
+            <!-- 登入狀態顯示 -->
+            <div id="login-status" style="text-align: center; margin: 10px 0; padding: 10px; border-radius: 5px;">
+                <span id="user-info">檢查登入狀態中...</span>
+            </div>
+            
             <div style="position:relative; display:inline-block;">
                 <img id="map-img" src="/data/Hong_Kong_Map.png" alt="地圖" style="max-width: 100%; height: auto;">
                 <div id="spot-container" style="position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none;"></div>
+            </div>
+            
+            <!-- 功能說明 -->
+            <div style="margin-top: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; text-align: left;">
+                <h4>使用說明：</h4>
+                <ul>
+                    <li><strong>會員限定功能：</strong>點擊地圖新增釣點標記</li>
+                    <li><strong>滑鼠懸停：</strong>查看釣點詳細資訊</li>
+                    <li><strong>右鍵點擊標記：</strong>編輯或刪除釣點（會員限定）</li>
+                    <li><strong>資料同步：</strong>您的標記會自動儲存到會員資料中</li>
+                </ul>
             </div>
         </div>
 
