@@ -37,5 +37,6 @@ if(existsSync(file)){
     return res.json({ ok: true });
   });
 
-  export default router;
 }
+
+  export default router;
