@@ -96,7 +96,7 @@ app.post('/login', (req, res) => {
 
 // 地圖標記 API - 儲存標記
 app.post('/api/map-flags', (req, res) => {
-  const { username, x, y, fish, place, time } = req.body;
+  const { username, x, y, fish, place, time, photoId } = req.body;
   
   if (!username || !fish || !place || !time) {
     return res.status(400).json({
@@ -128,6 +128,7 @@ app.post('/api/map-flags', (req, res) => {
       fish,
       place,
       time,
+      photoId: photoId || null, // 添加照片ID關聯
       createdAt: new Date().toISOString()
     };
     
@@ -220,6 +221,209 @@ app.delete('/api/map-flags/:username/:flagId', (req, res) => {
     
   } catch (error) {
     console.error('刪除地圖標記失敗:', error);
+    res.status(500).json({
+      success: false,
+      message: '伺服器錯誤'
+    });
+  }
+});
+
+// 檢查照片是否已有對應的地圖標記
+app.get('/api/photo-flag-status/:username/:photoId', (req, res) => {
+  const { username, photoId } = req.params;
+  
+  console.log(`檢查照片標記狀態: username=${username}, photoId=${photoId}`);
+  
+  try {
+    const flagsFile = path.join('PData', 'map_flags.json');
+    
+    if (!fs.existsSync(flagsFile)) {
+      console.log('map_flags.json 不存在，返回 hasFlag=false');
+      return res.json({
+        success: true,
+        hasFlag: false
+      });
+    }
+    
+    const data = fs.readFileSync(flagsFile, 'utf-8');
+    const flagsData: any = JSON.parse(data);
+    
+    const userFlags = flagsData[username] || [];
+    const hasFlag = userFlags.some((flag: any) => flag.photoId === parseInt(photoId));
+    
+    console.log(`用戶 ${username} 的標記數量: ${userFlags.length}`);
+    console.log(`照片 ${photoId} 是否有標記: ${hasFlag}`);
+    
+    res.json({
+      success: true,
+      hasFlag: hasFlag
+    });
+    
+  } catch (error) {
+    console.error('檢查照片標記狀態失敗:', error);
+    res.status(500).json({
+      success: false,
+      message: '伺服器錯誤'
+    });
+  }
+});
+
+// 用戶相冊 API - 儲存圖片
+app.post('/api/user-photos', (req, res) => {
+  const { username, imageData, location, description } = req.body;
+  
+  if (!username || !imageData) {
+    return res.status(400).json({
+      success: false,
+      message: '缺少必要欄位'
+    });
+  }
+  
+  try {
+    const photosFile = path.join('PData', 'user_photos.json');
+    let photosData: any = {};
+    
+    // 確保目錄存在
+    const dir = path.dirname(photosFile);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    // 讀取現有資料
+    if (fs.existsSync(photosFile)) {
+      const data = fs.readFileSync(photosFile, 'utf-8');
+      photosData = JSON.parse(data);
+    }
+    
+    // 初始化用戶資料
+    if (!photosData[username]) {
+      photosData[username] = [];
+    }
+    
+    // 創建新的圖片記錄
+    const newPhoto = {
+      id: Date.now(),
+      imageData: imageData,
+      location: location || '',
+      description: description || '',
+      uploadDate: new Date().toISOString()
+    };
+    
+    // 添加到用戶資料中
+    photosData[username].push(newPhoto);
+    
+    // 儲存到文件
+    fs.writeFileSync(photosFile, JSON.stringify(photosData, null, 2));
+    
+    res.json({
+      success: true,
+      message: '圖片儲存成功',
+      photoId: newPhoto.id
+    });
+    
+  } catch (error) {
+    console.error('儲存圖片失敗:', error);
+    res.status(500).json({
+      success: false,
+      message: '伺服器錯誤'
+    });
+  }
+});
+
+// 用戶相冊 API - 獲取圖片
+app.get('/api/user-photos/:username', (req, res) => {
+  const { username } = req.params;
+  
+  try {
+    const photosFile = path.join('PData', 'user_photos.json');
+    
+    if (!fs.existsSync(photosFile)) {
+      return res.json({
+        success: true,
+        photos: []
+      });
+    }
+    
+    const data = fs.readFileSync(photosFile, 'utf-8');
+    const photosData = JSON.parse(data);
+    
+    const userPhotos = photosData[username] || [];
+    
+    res.json({
+      success: true,
+      photos: userPhotos
+    });
+    
+  } catch (error) {
+    console.error('讀取圖片失敗:', error);
+    res.status(500).json({
+      success: false,
+      message: '伺服器錯誤'
+    });
+  }
+});
+
+// 用戶相冊 API - 刪除圖片
+app.delete('/api/user-photos/:username/:photoId', (req, res) => {
+  const { username, photoId } = req.params;
+  
+  try {
+    const photosFile = path.join('PData', 'user_photos.json');
+    
+    if (!fs.existsSync(photosFile)) {
+      return res.status(404).json({
+        success: false,
+        message: '找不到相冊資料'
+      });
+    }
+    
+    const data = fs.readFileSync(photosFile, 'utf-8');
+    const photosData = JSON.parse(data);
+    
+    if (!photosData[username]) {
+      return res.status(404).json({
+        success: false,
+        message: '找不到使用者資料'
+      });
+    }
+    
+    // 刪除指定的圖片
+    photosData[username] = photosData[username].filter((photo: any) => photo.id !== parseInt(photoId));
+    
+    // 儲存更新後的資料
+    fs.writeFileSync(photosFile, JSON.stringify(photosData, null, 2));
+    
+    // 同時刪除相關的地圖標記
+    try {
+      const mapFlagsFile = path.join('PData', 'map_flags.json');
+      if (fs.existsSync(mapFlagsFile)) {
+        const flagsData = fs.readFileSync(mapFlagsFile, 'utf-8');
+        const flagsJson = JSON.parse(flagsData);
+        
+        if (flagsJson[username]) {
+          // 找到並刪除與該 photoId 相關的標記
+          const originalCount = flagsJson[username].length;
+          flagsJson[username] = flagsJson[username].filter((flag: any) => flag.photoId !== parseInt(photoId));
+          const deletedCount = originalCount - flagsJson[username].length;
+          
+          // 保存更新後的地圖標記資料
+          fs.writeFileSync(mapFlagsFile, JSON.stringify(flagsJson, null, 2));
+          
+          console.log(`刪除照片 ${photoId} 時，同時刪除了 ${deletedCount} 個相關的地圖標記`);
+        }
+      }
+    } catch (flagError) {
+      console.error('刪除相關地圖標記時出錯:', flagError);
+      // 不影響照片刪除的成功，只記錄錯誤
+    }
+    
+    res.json({
+      success: true,
+      message: '圖片及相關標記刪除成功'
+    });
+    
+  } catch (error) {
+    console.error('刪除圖片失敗:', error);
     res.status(500).json({
       success: false,
       message: '伺服器錯誤'

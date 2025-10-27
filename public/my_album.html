@@ -35,6 +35,15 @@
             transform: translateY(-5px);
         }
         
+        /* 已標記的照片樣式 */
+        .photo-item.flagged {
+            cursor: not-allowed !important;
+        }
+        
+        .photo-item.flagged:hover {
+            transform: none;
+        }
+        
         .photo-item img {
             width: 100%;
             height: 100%;
@@ -54,16 +63,33 @@
             text-align: center;
         }
 
-        .delete-button {
+        /* 重置 delete-button 的樣式，避免被通用 button 樣式覆蓋 */
+        .photo-item .delete-button {
             position: absolute;
             top: 5px;
             right: 5px;
-            background-color: red;
+            background-color: #dc3545;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 3px;
             cursor: pointer;
-            padding: 5px;
+            padding: 2px 6px;
+            min-width: auto;
+            max-width: auto;
+            flex: none;
+            margin: 0;
+            font-size: 11px;
+            line-height: 1;
+            width: auto;
+            height: auto;
+            display: inline-block;
+            font-weight: bold;
+            z-index: 10;
+        }
+        
+        .photo-item .delete-button:hover {
+            background-color: #c82333;
+            opacity: 1;
         }
 
         .photo-description {
@@ -84,12 +110,40 @@
 
         .upload-section {
             display: flex;
-            justify-content: center; /* 使内容水平居中 */
+            justify-content: center;
             margin-top: 10px;
         }
 
-        .upload-section button {
-            margin: 0 10px; /* 按钮之间的间距 */
+        /* 重置上傳按鈕的樣式，避免被通用 button 樣式覆蓋 */
+        .upload-section #addImageButton,
+        .upload-section #submitImageButton {
+            margin: 0 10px;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            min-width: auto;
+            max-width: auto;
+            flex: none;
+        }
+        
+        .upload-section #addImageButton {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .upload-section #addImageButton:hover {
+            background-color: #45a049;
+        }
+        
+        .upload-section #submitImageButton {
+            background-color: #007BFF;
+            color: white;
+        }
+        
+        .upload-section #submitImageButton:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -105,10 +159,10 @@
 
         <div id="uploadArea" class="upload-section">
             <input type="file" id="imageUpload" style="display: none;" accept="image/*">
-            <button id="addImageButton" style="border: none; background-color: #4CAF50; color: white; padding: 5px 10px; cursor: pointer;">
+            <button id="addImageButton">
                 上傳圖片
             </button>
-            <button id="submitImageButton" style="border: none; background-color: #007BFF; color: white; padding: 5px 10px; cursor: pointer;">
+            <button id="submitImageButton">
                 提交圖片
             </button>
         </div>
@@ -117,54 +171,6 @@
     </div>
 
     <script src="/dist/client/index.js"></script>
-    <script>
-        document.getElementById('addImageButton').addEventListener('click', function() {
-            document.getElementById('imageUpload').click();
-        });
-
-        document.getElementById('submitImageButton').addEventListener('click', function() {
-            const fileInput = document.getElementById('imageUpload');
-            const photoGrid = document.getElementById('photoGrid');
-
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const photoItem = document.createElement('div');
-                    photoItem.classList.add('photo-item');
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-
-                    const title = document.createElement('div');
-                    title.classList.add('photo-title');
-                    title.textContent = "";
-
-                    const description = document.createElement('div');
-                    description.classList.add('photo-description');
-
-                    const today = new Date();
-                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                    description.textContent = today.toLocaleDateString('zh-CN', options);
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.classList.add('delete-button');
-                    deleteButton.textContent = 'X';
-                    deleteButton.onclick = function() {
-                        photoGrid.removeChild(photoItem);
-                    };
-
-                    photoItem.appendChild(img);
-                    photoItem.appendChild(title);
-                    photoItem.appendChild(description);
-                    photoItem.appendChild(deleteButton);
-                    photoGrid.appendChild(photoItem);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert('choose a file first!');
-            }
-        });
-    </script>
+    <script src="/dist/client/my_albums.js"></script>
 </body>
 </html>

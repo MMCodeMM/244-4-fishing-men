@@ -1,6 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Header 由 index.js 處理
   
+  // 初始化狀態變數（只有在未設置時才初始化）
+  if ((window as any).isWaitingForMapClick === undefined) {
+    (window as any).isWaitingForMapClick = false;
+  }
+  if ((window as any).pendingPhotoForMapping === undefined) {
+    (window as any).pendingPhotoForMapping = null;
+  }
+  
   const mapImg = document.getElementById('map-img') as HTMLImageElement;
   const spotContainer = document.getElementById('spot-container') as HTMLElement;
   const userInfo = document.getElementById('user-info') as HTMLElement;
@@ -56,6 +64,216 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('載入地圖標記失敗:', error);
     }
+  }
+
+  // 檢查來自相冊的待處理地圖標記
+  function checkPendingMapFlag(): void {
+    const pendingFlag = localStorage.getItem('pendingMapFlag');
+    if (pendingFlag) {
+      try {
+        const flagData = JSON.parse(pendingFlag);
+        
+        // 清除暫存資料
+        localStorage.removeItem('pendingMapFlag');
+        
+        // 檢查是否已登入
+        if (!checkLoginStatus()) {
+          alert('請先登入才能添加地圖標記！');
+          return;
+        }
+        
+        if (flagData.fromMapClick) {
+          // 來自地圖點擊後選擇照片 - 直接創建標記
+          handleMapClickPhotoSelection(flagData);
+        } else {
+          // 來自相冊的正常流程 - 顯示照片並讓用戶選擇位置
+          showAlbumPhotoForMapping(flagData);
+        }
+        
+      } catch (error) {
+        console.error('處理待處理標記失敗:', error);
+        localStorage.removeItem('pendingMapFlag');
+      }
+    }
+  }
+  
+  // 顯示來自相冊的照片並等待用戶在地圖上點擊位置
+  function showAlbumPhotoForMapping(photoData: any): void {
+    // 創建浮動視窗顯示照片資訊
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    overlay.style.zIndex = '1000';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    
+    const modal = document.createElement('div');
+    modal.style.backgroundColor = 'white';
+    modal.style.padding = '30px';
+    modal.style.borderRadius = '10px';
+    modal.style.maxWidth = '500px';
+    modal.style.textAlign = 'center';
+    modal.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+    
+    modal.innerHTML = `
+      <h3 style="color: #2c3e50; margin-bottom: 20px;">📸 來自相冊的照片</h3>
+      <img src="${photoData.imageData}" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-bottom: 15px;">
+      <p style="margin: 10px 0; color: #34495e;"><strong>位置：</strong>${photoData.location}</p>
+      <p style="margin: 10px 0; color: #34495e;"><strong>上傳時間：</strong>${new Date(photoData.uploadDate).toLocaleString('zh-TW')}</p>
+      <hr style="margin: 20px 0;">
+      <p style="color: #e74c3c; font-weight: bold; margin: 15px 0;">🎯 請在地圖上點擊要添加標記的位置</p>
+      <div style="margin-top: 20px;">
+        <button id="cancelMapping" style="padding: 10px 20px; margin: 0 10px; background-color: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer;">確定</button>
+      </div>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // 確定按鈕事件 - 只關閉對話框，保持狀態
+    const cancelBtn = modal.querySelector('#cancelMapping') as HTMLButtonElement;
+    cancelBtn.onclick = () => {
+      document.body.removeChild(overlay);
+      // 不清除狀態，保持等待地圖點擊的狀態
+      // (window as any).isWaitingForMapClick = false;
+      // (window as any).pendingPhotoForMapping = null;
+      // restoreUserInfo();
+    };
+    
+    // 臨時儲存照片資料供地圖點擊使用
+    (window as any).pendingPhotoForMapping = photoData;
+    
+    // 修改地圖點擊行為以處理來自相冊的照片
+    (window as any).isWaitingForMapClick = true;
+    
+    console.log('設置場景一狀態:', {
+      isWaitingForMapClick: (window as any).isWaitingForMapClick,
+      pendingPhotoForMapping: (window as any).pendingPhotoForMapping
+    });
+    
+    // 更新用戶提示
+    if (userInfo) {
+      const originalText = userInfo.textContent;
+      userInfo.style.backgroundColor = '#fff3cd';
+      userInfo.style.color = '#856404';
+      userInfo.textContent = '🎯 請在地圖上點擊要添加標記的位置，或取消操作';
+      
+      // 儲存原始樣式以便恢復
+      (window as any).originalUserInfoStyle = {
+        text: originalText,
+        backgroundColor: loginStatus.style.backgroundColor,
+        color: loginStatus.style.color
+      };
+    }
+  }
+  
+  // 處理來自地圖點擊後選擇照片的情況
+  function handleMapClickPhotoSelection(flagData: any): void {
+    console.log('處理來自地圖點擊的照片選擇:', flagData);
+    
+    // 使用照片資訊和預設的地圖位置創建標記
+    const fish = `照片標記 - ${flagData.location}`;
+    const place = flagData.location;
+    const time = new Date(flagData.uploadDate).toLocaleDateString('zh-TW');
+    
+    // 直接在指定位置創建標記
+    createFlag({
+      x: flagData.x, 
+      y: flagData.y, 
+      fish, 
+      place, 
+      time, 
+      photoId: flagData.photoId
+    }, true);
+    
+    // 顯示成功訊息
+    alert('📸 已成功將選擇的照片添加為地圖標記！');
+    
+    // 通知其他頁面標記已創建，需要刷新狀態
+    localStorage.setItem('flagCreated', Date.now().toString());
+    
+    // 設置延遲標記，確保相冊頁面能檢測到
+    localStorage.setItem('needAlbumRefresh', 'true');
+    
+    // 設置標記後重新載入頁面
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000); // 等待1秒讓標記保存完成
+  }
+
+  // 恢復用戶資訊顯示
+  function restoreUserInfo(): void {
+    const originalStyle = (window as any).originalUserInfoStyle;
+    if (originalStyle && userInfo) {
+      userInfo.textContent = originalStyle.text;
+      loginStatus.style.backgroundColor = originalStyle.backgroundColor;
+      loginStatus.style.color = originalStyle.color;
+    }
+  }
+
+  // 顯示創建標記確認對話框
+  function showCreateFlagConfirmDialog(x: number, y: number): void {
+    // 創建覆蓋層
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlay.style.zIndex = '1000';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    
+    // 創建對話框
+    const dialog = document.createElement('div');
+    dialog.style.backgroundColor = 'white';
+    dialog.style.padding = '30px';
+    dialog.style.borderRadius = '10px';
+    dialog.style.maxWidth = '400px';
+    dialog.style.textAlign = 'center';
+    dialog.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+    
+    dialog.innerHTML = `
+      <h3 style="color: #2c3e50; margin-bottom: 20px;">🎯 您想要在此位置創建標記嗎？</h3>
+      <p style="margin: 15px 0; color: #34495e;">點擊「確定」將跳轉到相冊選擇照片</p>
+      <div style="margin: 20px 0;">
+        <button id="confirmCreate" style="padding: 12px 25px; margin: 0 10px; background-color: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">確定</button>
+        <button id="cancelCreate" style="padding: 12px 25px; margin: 0 10px; background-color: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">取消</button>
+      </div>
+    `;
+    
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    
+    // 確定按鈕
+    const confirmBtn = dialog.querySelector('#confirmCreate') as HTMLButtonElement;
+    confirmBtn.onclick = () => {
+      document.body.removeChild(overlay);
+      // 跳轉到相冊選擇照片
+      localStorage.setItem('pendingMapFlag', JSON.stringify({
+        x: x,
+        y: y,
+        fromMapClick: true, // 標識這是從地圖點擊過來的
+        timestamp: Date.now()
+      }));
+      
+      // 跳轉到相冊頁面
+      window.location.href = '/my_album.html';
+    };
+    
+    // 取消按鈕
+    const cancelBtn = dialog.querySelector('#cancelCreate') as HTMLButtonElement;
+    cancelBtn.onclick = () => {
+      document.body.removeChild(overlay);
+      // 什麼都不做，直接關閉對話框
+    };
   }
 
   // 儲存標記到伺服器
@@ -127,20 +345,66 @@ document.addEventListener('DOMContentLoaded', () => {
       const rect = mapImg.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 100;
       const y = ((e.clientY - rect.top) / rect.height) * 100;
-      // 彈窗輸入
-      const fish = prompt('請輸入魚名:');
-      if (!fish) return;
-      const place = prompt('請輸入地點:');
-      if (!place) return;
-      const time = prompt('請輸入時間:');
-      if (!time) return;
-      createFlag({x, y, fish, place, time}, true);
+      
+      // 檢查是否是來自相冊的照片添加標記
+      console.log('地圖點擊檢查狀態:', {
+        isWaitingForMapClick: (window as any).isWaitingForMapClick,
+        pendingPhotoForMapping: (window as any).pendingPhotoForMapping
+      });
+      
+      if ((window as any).isWaitingForMapClick && (window as any).pendingPhotoForMapping) {
+        console.log('場景一：來自相冊，直接創建標記');
+        const photoData = (window as any).pendingPhotoForMapping;
+        
+        // 使用照片資訊創建標記
+        const fish = `照片標記 - ${photoData.location}`;
+        const place = photoData.location;
+        const time = new Date(photoData.uploadDate).toLocaleDateString('zh-TW');
+        
+        // 創建標記並儲存，包含照片ID關聯
+        createFlag({x, y, fish, place, time, photoId: photoData.photoId}, true);
+        
+        // 清理狀態
+        (window as any).isWaitingForMapClick = false;
+        (window as any).pendingPhotoForMapping = null;
+        
+        // 移除浮動視窗
+        const overlay = document.querySelector('div[style*="position: fixed"][style*="z-index: 1000"]');
+        if (overlay) {
+          document.body.removeChild(overlay);
+        }
+        
+        // 恢復用戶資訊顯示
+        restoreUserInfo();
+        
+        // 通知其他頁面標記已創建，需要刷新狀態
+        localStorage.setItem('flagCreated', Date.now().toString());
+        
+        // 設置延遲標記，確保相冊頁面能檢測到
+        localStorage.setItem('needAlbumRefresh', 'true');
+        
+        // 顯示成功訊息
+        alert('📸 已成功將相冊照片添加為地圖標記！');
+        
+        // 設置標記後重新載入頁面
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000); // 等待1秒讓標記保存完成
+        return;
+      }
+      
+      // 一般的地圖點擊處理 - 顯示確認對話框
+      console.log('場景二：地圖點擊，顯示確認對話框');
+      showCreateFlagConfirmDialog(x, y);
     });
   }
 
   // 初始化
   checkLoginStatus();
   loadUserFlags();
+  
+  // 檢查來自相冊的待處理標記
+  checkPendingMapFlag();
   
   // 監聽登入狀態變化
   window.addEventListener('storage', (e) => {
@@ -156,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function createFlag(
-    {x, y, fish, place, time, id}: {x: number, y: number, fish: string, place: string, time: string, id?: number}, 
+    {x, y, fish, place, time, id, photoId}: {x: number, y: number, fish: string, place: string, time: string, id?: number, photoId?: number}, 
     saveToServer: boolean = true
   ) {
     const flag = document.createElement('div');
@@ -245,6 +509,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (id && await deleteFlagFromServer(id)) {
             flag.remove();
             alert('標記已刪除並同步到您的會員資料');
+            
+            // 通知其他頁面標記已刪除，需要刷新狀態
+            localStorage.setItem('flagDeleted', Date.now().toString());
+            
           } else if (!id) {
             flag.remove(); // 如果沒有 ID（本地標記），直接刪除
           } else {
@@ -305,7 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 如果需要儲存到伺服器
     if (saveToServer && currentUser) {
-      saveFlagToServer({ x, y, fish, place, time }).then((savedFlagId) => {
+      saveFlagToServer({ x, y, fish, place, time, photoId }).then((savedFlagId) => {
         if (savedFlagId) {
           flagId = savedFlagId;
           console.log('標記已儲存到會員資料，ID:', flagId);
