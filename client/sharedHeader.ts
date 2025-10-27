@@ -33,27 +33,29 @@ export function renderHeaderAndNav(showNav: boolean = true) {
     </div>
   `;
   
+  // 在 HEADER 和 NAVIGATION 中間添加歡迎訊息
+  if (showNav && currentUser) {
+    html += `
+      <div style="display: flex; justify-content: center; align-items: center; padding: 10px; background-color: #A1C6E7;">
+        <span style="color: white; font-weight: bold; font-size: 1.5em; text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black;">歡迎, ${currentUser.username}</span>
+      </div>
+    `;
+  }
+  
   if (showNav) {
-    // 根據登入狀態顯示不同的 auth-buttons
+    // 根據登入狀態顯示不同的 auth-buttons，移除歡迎訊息
     const authButtonsHTML = currentUser ? `
-      <div class="auth-buttons">
-        <span style="color: white; margin-right: 10px; font-weight: bold; font-size: 1.5em; text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black;">歡迎, ${currentUser.username}</span>
         <button onclick="location.href='my_album.html'">我的圖鑑</button>
         <button onclick="logout()" style="background-color: #dc3545; color: white;">登出</button>
-      </div>
     ` : `
-      <div class="auth-buttons">
         <button onclick="location.href='register.html'">注冊/登入</button>
-      </div>
     `;
     
     html += `
-      <div class="navigation">
-        <div class="nav-buttons">
-          <button onclick="location.href='search.html'">搜尋</button>
-          <button onclick="location.href='map.html'">地圖</button>
-          <button onclick="location.href='album.html'">圖鑑</button>
-        </div>
+      <div class="navigation" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <button onclick="location.href='search.html'">搜尋</button>
+        <button onclick="location.href='map.html'">地圖</button>
+        <button onclick="location.href='album.html'">圖鑑</button>
         ${authButtonsHTML}
       </div>
     `;

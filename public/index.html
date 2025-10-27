@@ -6,45 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home Page</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="slider.css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper@11/swiper-bundle.min.css" />
 </head>
 
 <body>
     <div class="container">
         <div class="header"></div>
-        <div id="slider-container">
-            <div class="pagination-list">
-                <input type="radio" name="position" class="slider-radio" />
-                <input type="radio" name="position" class="slider-radio" />
-                <input type="radio" name="position" class="slider-radio" checked />
-                <input type="radio" name="position" class="slider-radio" />
-                <input type="radio" name="position" class="slider-radio" />
+        <div class="swiper-container">
+            <div class="swiper-wrapper" id="fish-swiper-wrapper">
+                <!-- 動態載入的魚類資料將插入這裡 -->
             </div>
-            <main id="carousel">
-                <div class="item">
-                    <img src="data/fish/001.png">
-                    <h3 class="name">九肚魚 BOMBAY BUCK</h3>
-                </div>
-                <div class="item">
-                    <img src="data/fish/002.png">
-                    <h3 class="name">木棉(大眼雞) BIGEYE</h3>
-                </div>
-                <div class="item">
-                    <img src="data/fish/003.png">
-                    <h3 class="name">白飯魚 NOODLEFISH</h3>
-                </div>
-                <div class="item">
-                    <img src="data/fish/004.png">
-                    <h3 class="name">白鱲 WHITE SEABREAM AGUOT</h3>
-                </div>
-                <div class="item">
-                    <img src="data/fish/005.png">
-                    <h3 class="name">芝麻班 BROWN SPOTTED GROUPER</h3>
-                </div>
-            </main>
+            <div class="slider-buttons">
+                <button class="swiper-button-prev">Prev</button>
+                <button class="swiper-button-next">Next</button>
+            </div>
+            <div class="swiper-pagination"></div>
         </div>
 
     </div>
+    <script src="https://unpkg.com/swiper@11/swiper-bundle.min.js"></script>
     <script src="/dist/client/index.js"></script>
 </body>
 
