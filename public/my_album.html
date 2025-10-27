@@ -20,6 +20,22 @@
             margin: 30px auto;
         }
         
+        /* 響應式設計：當螢幕寬度小於768px時，顯示2列 */
+        @media (max-width: 768px) {
+            .photo-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 600px;
+            }
+        }
+        
+        /* 響應式設計：當螢幕寬度小於480px時，顯示1列 */
+        @media (max-width: 480px) {
+            .photo-grid {
+                grid-template-columns: repeat(1, 1fr);
+                max-width: 300px;
+            }
+        }
+        
         .photo-item {
             position: relative;
             overflow: hidden;
@@ -153,7 +169,7 @@
         </div>
   
 
-    <div style="border: 2px solid rgb(71, 31, 153); width: 790px; margin: 20px auto; padding: 10px; box-sizing: border-box;">
+    <div style="border: 2px solid rgb(71, 31, 153); width: 790px; max-width: 95%; margin: 20px auto; padding: 10px; box-sizing: border-box;">
         <h2 style="text-align: center;">我的相冊</h2>
 
         <div id="uploadArea" class="upload-section">
