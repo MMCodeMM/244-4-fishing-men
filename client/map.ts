@@ -399,9 +399,123 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 載入固定的魚類資訊展示點
+  async function loadFishInfoSpots() {
+    try {
+      const response = await fetch('/api/fish');
+      const fishList = await response.json();
+      
+      // 為 12 種魚類預設的地圖位置（百分比）
+      const fishSpots = [
+        { x: 15, y: 20 },   // 九肚魚
+        { x: 85, y: 25 },   // 木棉
+        { x: 35, y: 15 },   // 白飯魚
+        { x: 65, y: 30 },   // 白鱲
+        { x: 25, y: 40 },   // 芝麻班
+        { x: 75, y: 45 },   // 紅衫
+        { x: 45, y: 35 },   // 烏頭
+        { x: 55, y: 60 },   // 馬頭
+        { x: 20, y: 70 },   // 黃鱲鯧
+        { x: 70, y: 75 },   // 鯉魚
+        { x: 40, y: 80 },   // 鯇魚
+        { x: 80, y: 55 }    // 鯧魚
+      ];
+      
+      fishList.forEach((fish: any, index: number) => {
+        if (index < fishSpots.length) {
+          const spot = fishSpots[index];
+          createFishInfoSpot(spot.x, spot.y, fish);
+        }
+      });
+      
+    } catch (error) {
+      console.error('載入魚類資訊點失敗:', error);
+    }
+  }
+
+  // 創建魚類資訊展示點（供訪客查看）
+  function createFishInfoSpot(x: number, y: number, fish: any) {
+    const spot = document.createElement('div');
+    spot.style.position = 'absolute';
+    spot.style.left = x + '%';
+    spot.style.top = y + '%';
+    spot.style.transform = 'translate(-50%, -100%)';
+    spot.style.cursor = 'pointer';
+    spot.style.pointerEvents = 'auto';
+    spot.style.zIndex = '1000';
+    
+    // 魚類資訊點的外觀（與用戶標記區別開）
+    spot.innerHTML = `
+      <div style="
+        width: 20px; 
+        height: 20px; 
+        background: linear-gradient(45deg, #28a745, #20c997); 
+        border: 2px solid white; 
+        border-radius: 50%; 
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);
+        position: relative;
+      ">
+        <div style="
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          width: 20px;
+          height: 20px;
+          border: 2px solid #28a745;
+          border-radius: 50%;
+          animation: pulse 2s infinite;
+        "></div>
+      </div>
+    `;
+    
+    // 魚類資訊展示
+    const tooltip = document.createElement('div');
+    tooltip.className = 'flag-info';
+    tooltip.style.position = 'absolute';
+    tooltip.style.bottom = '25px';
+    tooltip.style.left = '50%';
+    tooltip.style.transform = 'translateX(-50%)';
+    tooltip.style.background = 'white';
+    tooltip.style.padding = '10px';
+    tooltip.style.borderRadius = '5px';
+    tooltip.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    tooltip.style.minWidth = '120px';
+    tooltip.style.display = 'none';
+    tooltip.style.zIndex = '1001';
+    
+    tooltip.innerHTML = `
+      <div style="text-align: center;">
+        <img src="${fish.image}" alt="${fish.name}" style="width: 80px; height: 60px; object-fit: contain; margin-bottom: 8px;">
+        <div style="font-weight: bold; color: #28a745; margin-bottom: 8px;">${fish.name}</div>
+        <div style="font-size: 0.8em; color: #999;">點擊查看詳細介紹</div>
+      </div>
+    `;
+    
+    spot.appendChild(tooltip);
+    
+    // 懸停顯示資訊
+    spot.addEventListener('mouseenter', () => {
+      tooltip.style.display = 'block';
+    });
+    
+    spot.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+    
+    // 點擊跳轉到相冊查看該魚類
+    spot.addEventListener('click', () => {
+      window.location.href = `album.html?fish=${encodeURIComponent(fish.name)}`;
+    });
+    
+    if (spotContainer) {
+      spotContainer.appendChild(spot);
+    }
+  }
+
   // 初始化
   checkLoginStatus();
   loadUserFlags();
+  loadFishInfoSpots(); // 載入魚類資訊展示點
   
   // 檢查來自相冊的待處理標記
   checkPendingMapFlag();

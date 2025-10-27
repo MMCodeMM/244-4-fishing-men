@@ -39,6 +39,22 @@
             border: 1.5px solid rgb(71, 30, 153) !important;
             text-align: left;
         }
+        
+        /* 魚類資訊點脈衝動畫 */
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 <body>
@@ -65,6 +81,7 @@
             <div style="margin-top: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; text-align: left;">
                 <h4>使用說明：</h4>
                 <ul>
+                    <li><strong>🐟 綠色圓點：</strong>魚類資訊展示點，懸停查看魚類介紹，點擊跳轉到相冊</li>
                     <li><strong>會員限定功能：</strong>點擊地圖新增釣點標記</li>
                     <li><strong>滑鼠懸停：</strong>查看釣點詳細資訊</li>
                     <li><strong>右鍵點擊標記：</strong>編輯或刪除釣點（會員限定）</li>
