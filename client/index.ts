@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (swiperWrapper) {
         swiperWrapper.innerHTML = selected.map((fish: any) => `
-          <div class="slider-item swiper-slide">
+          <div class="slider-item swiper-slide" data-fish-name="${fish.name}" style="cursor: pointer;">
             <div class="slider-image-wrapper">
               <img class="slider-image" src="${fish.image}" alt="${fish.name}">
             </div>
@@ -27,6 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
         `).join('');
+        
+        // 添加點擊事件處理器
+        const slides = swiperWrapper.querySelectorAll('.slider-item');
+        slides.forEach(slide => {
+          slide.addEventListener('click', (e) => {
+            const fishName = (e.currentTarget as HTMLElement).dataset.fishName;
+            if (fishName) {
+              // 跳轉到 album.html 並傳遞魚類名稱參數
+              window.location.href = `album.html?fish=${encodeURIComponent(fishName)}`;
+            }
+          });
+        });
         
         // 初始化 Swiper
         const swiper = new Swiper('.swiper-container', {
