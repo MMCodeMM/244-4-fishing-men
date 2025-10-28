@@ -2,7 +2,58 @@ console.log('register.ts loaded v3')
 
 document.addEventListener('DOMContentLoaded', () => {
   // Header 由 index.js 處理，這裡只處理註冊功能
+  // 初始化為註冊模式
+  switchTab('register');
 });
+
+// Tab 切換功能
+function switchTab(mode: 'register' | 'login') {
+  const registerTab = document.getElementById('registerTab') as HTMLButtonElement;
+  const loginTab = document.getElementById('loginTab') as HTMLButtonElement;
+  const emailField = document.getElementById('emailField') as HTMLElement;
+  const confirmPasswordField = document.getElementById('confirmPasswordField') as HTMLElement;
+  const registerButton = document.getElementById('registerButton') as HTMLButtonElement;
+  const loginButton = document.getElementById('loginButton') as HTMLButtonElement;
+
+  // 清除所有欄位的錯誤狀態
+  clearFieldErrors();
+
+  if (mode === 'register') {
+    // 註冊模式
+    registerTab.classList.add('active');
+    loginTab.classList.remove('active');
+    emailField.classList.remove('hidden');
+    confirmPasswordField.classList.remove('hidden');
+    registerButton.style.display = 'inline-block';
+    loginButton.style.display = 'none';
+  } else {
+    // 登入模式
+    loginTab.classList.add('active');
+    registerTab.classList.remove('active');
+    emailField.classList.add('hidden');
+    confirmPasswordField.classList.add('hidden');
+    registerButton.style.display = 'none';
+    loginButton.style.display = 'inline-block';
+  }
+}
+
+// 清除欄位錯誤狀態的輔助函數
+function clearFieldErrors() {
+  const fields = ['usernameField', 'emailField', 'passwordField', 'confirmPasswordField'];
+  fields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.classList.remove('error', 'success');
+    }
+  });
+  const resultMessage = document.getElementById('resultMessage') as HTMLElement;
+  if (resultMessage) {
+    resultMessage.textContent = '';
+  }
+}
+
+// 將 switchTab 函數添加到全域範圍
+(window as any).switchTab = switchTab;
 
 async function subRegister() {
   const usernameInput = document.getElementById('usernameInput') as HTMLInputElement;

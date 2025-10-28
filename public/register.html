@@ -9,7 +9,11 @@
   <body data-header="logo-only">
     <div class="container">
       <div class="registration-form">
-        <h2 style="text-align: center">會員註冊</h2>
+        <!-- Tab 切換按鈕 -->
+        <div class="tab-container">
+          <button class="tab-button active" id="registerTab" onclick="switchTab('register')">會員註冊</button>
+          <button class="tab-button" id="loginTab" onclick="switchTab('login')">會員登入</button>
+        </div>
 
         <div class="field" id="usernameField">
           <label for="usernameInput">Username:</label>
