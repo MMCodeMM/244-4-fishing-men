@@ -51,10 +51,7 @@ async function handleImageSearch(event: Event) {
   const file = input.files?.[0];
   const resultDiv = document.getElementById('searchResult') as HTMLElement;
   
-  console.log('handleImageSearch called', file); // 調試資訊
-  
   if (!file) {
-    console.log('No file selected');
     return;
   }
   
@@ -77,8 +74,6 @@ async function handleImageSearch(event: Event) {
     // 顯示選中的圖片
     const reader = new FileReader();
     reader.onload = function(e) {
-      console.log('Image loaded successfully'); // 調試資訊
-      
       const imagePreview = `
         <div style="text-align:center; margin:20px; padding:20px; border:2px dashed #4CAF50; border-radius:10px; background-color:#f9f9f9;">
           <h3 style="color:#2c3e50; margin-bottom:15px;">📸 已選擇的圖片</h3>
@@ -115,7 +110,6 @@ async function showAllFishAsSearchResult(imagePreview: string) {
   const resultDiv = document.getElementById('searchResult') as HTMLElement;
   
   try {
-    console.log('Fetching fish data...'); // 調試資訊
     const res = await fetch('/api/fish');
     
     if (!res.ok) {
@@ -123,7 +117,6 @@ async function showAllFishAsSearchResult(imagePreview: string) {
     }
     
     const fishList = await res.json();
-    console.log('Fish data loaded:', fishList.length, 'species'); // 調試資訊
     
     const allFishHTML = fishList.map((fish: any, index: number) => `
       <div style="display:inline-block; text-align:center; border:2px solid #3498db; border-radius:12px; padding:20px; margin:15px; box-shadow:0 4px 15px rgba(52, 152, 219, 0.2); background-color:white; max-width:280px; cursor:pointer; transition:all 0.3s ease;" 

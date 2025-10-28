@@ -322,6 +322,7 @@ button:hover {
   transition-delay: .3s;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;  /* 標準屬性以提高瀏覽器相容性 */
   -webkit-box-orient: vertical;  
   overflow: hidden;
   text-overflow: ellipsis;

@@ -33,8 +33,6 @@ async function displayAllFish() {
       container.appendChild(photoItem);
     });
     
-    console.log('顯示所有魚種:', fishList);
-    
     // 檢查 URL 參數，如果有指定魚類則滾動到該位置
     const urlParams = new URLSearchParams(window.location.search);
     const targetFish = urlParams.get('fish');

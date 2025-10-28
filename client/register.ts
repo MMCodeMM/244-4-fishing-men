@@ -1,4 +1,4 @@
-console.log('register.ts loaded v3')
+// register.ts - 會員註冊與登入功能
 
 document.addEventListener('DOMContentLoaded', () => {
   // Header 由 index.js 處理，這裡只處理註冊功能
