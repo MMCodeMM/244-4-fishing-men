@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const mapImg = document.getElementById('map-img') as HTMLImageElement;
   const spotContainer = document.getElementById('spot-container') as HTMLElement;
+  const flagContainer = document.getElementById('flag-container') as HTMLElement;
   const userInfo = document.getElementById('user-info') as HTMLElement;
   const loginStatus = document.getElementById('login-status') as HTMLElement;
 
@@ -442,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     spot.style.transform = 'translate(-50%, -100%)';
     spot.style.cursor = 'pointer';
     spot.style.pointerEvents = 'auto';
-    spot.style.zIndex = '1000';
+    spot.style.zIndex = '10';
     
     // 魚類資訊點的外觀（與用戶標記區別開）
     spot.innerHTML = `
@@ -481,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
     tooltip.style.minWidth = '120px';
     tooltip.style.display = 'none';
-    tooltip.style.zIndex = '1001';
+    tooltip.style.zIndex = '15';
     
     tooltip.innerHTML = `
       <div style="text-align: center;">
@@ -514,8 +515,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 初始化
   checkLoginStatus();
-  loadUserFlags();
-  loadFishInfoSpots(); // 載入魚類資訊展示點
+  loadFishInfoSpots(); // 先載入魚類資訊展示點（背景層）
+  loadUserFlags();     // 後載入用戶標記（前景層）
   
   // 檢查來自相冊的待處理標記
   checkPendingMapFlag();
@@ -525,8 +526,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'currentUser') {
       checkLoginStatus();
       // 清空現有標記
-      if (spotContainer) {
-        spotContainer.innerHTML = '';
+      if (flagContainer) {
+        flagContainer.innerHTML = '';
       }
       // 重新載入標記
       loadUserFlags();
@@ -579,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <polygon points="2,2 20,8 2,14" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
         <rect x="2" y="2" width="2" height="28" fill="#555"/>
       </svg>
-      <div class="flag-info" style="display:none; position:absolute; left:28px; top:0; background:rgba(255,255,255,0.95); padding:6px 12px; border-radius:6px; box-shadow:0 2px 8px #aaa; font-size:14px; min-width:120px; z-index:20; border:1.5px solid rgb(71, 30, 153);">
+      <div class="flag-info" style="display:none; position:absolute; left:28px; top:0; background:rgba(255,255,255,0.95); padding:6px 12px; border-radius:6px; box-shadow:0 2px 8px #aaa; font-size:14px; min-width:120px; z-index:100; border:1.5px solid rgb(71, 30, 153);">
         <div><b>魚名：</b><span class="fish-name">${fish}</span></div>
         <div><b>地點：</b><span class="fish-place">${wrapPlaceText(place)}</span></div>
         <div><b>時間：</b><span class="fish-time">${time}</span></div>
@@ -680,7 +681,9 @@ document.addEventListener('DOMContentLoaded', () => {
       flag.appendChild(menu);
     });
     
-    spotContainer.appendChild(flag);
+    if (flagContainer) {
+      flagContainer.appendChild(flag);
+    }
     
     // 設置標記 ID
     let flagId = id;
