@@ -6,8 +6,12 @@ import fs from 'fs'
 import path from 'path'
 import { router as userRouter } from './user'
 import { mkdirSync} from 'fs'
+import formidable, { IncomingForm } from 'formidable'
 
 mkdirSync('PData', { recursive: true });
+mkdirSync('uploads', { recursive: true });
+mkdirSync('uploads/user-photos', { recursive: true });
+mkdirSync('uploads/search-images', { recursive: true });
 
 let app = express()
 
@@ -26,6 +30,82 @@ try {
 
 app.use('/dist/client', express.static('dist/client'))
 app.use(express.static('public'))
+// 設置靜態文件服務
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// 圖片搜尋 API - 使用 Formidable
+app.post('/api/search-image', (req, res) => {
+  const form = formidable({
+    uploadDir: path.join('uploads', 'search-images'),
+    keepExtensions: true,
+    maxFileSize: 10 * 1024 * 1024, // 10MB 限制
+    filter: ({ mimetype }) => {
+      return mimetype ? mimetype.startsWith('image/') : false;
+    }
+  });
+
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      console.error('搜尋圖片解析失敗:', err);
+      return res.status(400).json({
+        success: false,
+        message: '圖片上傳失敗'
+      });
+    }
+
+    // 處理單個文件上傳
+    const file = Array.isArray(files.image) ? files.image[0] : files.image;
+    
+    if (!file) {
+      return res.status(400).json({
+        success: false,
+        message: '沒有接收到圖片文件'
+      });
+    }
+
+    // 檢查文件類型
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!allowedTypes.includes(file.mimetype || '')) {
+      // 刪除無效文件
+      fs.unlink(file.filepath, (unlinkErr) => {
+        if (unlinkErr) console.error('刪除無效文件失敗:', unlinkErr);
+      });
+      
+      return res.status(400).json({
+        success: false,
+        message: '只支援 JPG、PNG、GIF 格式的圖片'
+      });
+    }
+
+    try {
+      // 生成唯一文件名
+      const timestamp = Date.now();
+      const originalName = file.originalFilename || 'search_image';
+      const extension = path.extname(originalName);
+      const newFilename = `search_${timestamp}${extension}`;
+      const newFilepath = path.join(path.dirname(file.filepath), newFilename);
+
+      // 重命名文件
+      fs.renameSync(file.filepath, newFilepath);
+
+      // 這裡將來可以添加 AI 圖片識別邏輯
+      // 目前返回成功狀態，讓前端顯示所有魚種
+      res.json({
+        success: true,
+        filename: newFilename,
+        message: '圖片已接收，正在分析中...',
+        searchResults: 'all_fish' // 標記返回所有魚種
+      });
+
+    } catch (error) {
+      console.error('處理搜尋圖片失敗:', error);
+      res.status(500).json({
+        success: false,
+        message: '處理圖片時發生錯誤'
+      });
+    }
+  });
+});
 app.use(express.json())
 app.use(userRouter)
 
@@ -268,66 +348,99 @@ app.get('/api/photo-flag-status/:username/:photoId', (req, res) => {
   }
 });
 
-// 用戶相冊 API - 儲存圖片
+// 用戶相冊 API - 儲存圖片 (使用 Formidable)
 app.post('/api/user-photos', (req, res) => {
-  const { username, imageData, location, description } = req.body;
-  
-  if (!username || !imageData) {
-    return res.status(400).json({
-      success: false,
-      message: '缺少必要欄位'
-    });
-  }
-  
-  try {
-    const photosFile = path.join('PData', 'user_photos.json');
-    let photosData: any = {};
-    
-    // 確保目錄存在
-    const dir = path.dirname(photosFile);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+  const form = formidable({
+    uploadDir: path.join('uploads', 'user-photos'),
+    keepExtensions: true,
+    maxFileSize: 10 * 1024 * 1024, // 10MB 限制
+    filter: ({ mimetype }) => {
+      // 只允許圖片類型
+      return mimetype ? mimetype.startsWith('image/') : false;
     }
-    
-    // 讀取現有資料
-    if (fs.existsSync(photosFile)) {
-      const data = fs.readFileSync(photosFile, 'utf-8');
-      photosData = JSON.parse(data);
+  });
+
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      console.error('檔案上傳錯誤:', err);
+      return res.status(400).json({
+        success: false,
+        message: '檔案上傳失敗: ' + err.message
+      });
     }
-    
-    // 初始化用戶資料
-    if (!photosData[username]) {
-      photosData[username] = [];
+
+    const username = Array.isArray(fields.username) ? fields.username[0] : fields.username;
+    const location = Array.isArray(fields.location) ? fields.location[0] : fields.location;
+    const description = Array.isArray(fields.description) ? fields.description[0] : fields.description;
+    const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+
+    if (!username || !imageFile) {
+      return res.status(400).json({
+        success: false,
+        message: '缺少必要欄位'
+      });
     }
-    
-    // 創建新的圖片記錄
-    const newPhoto = {
-      id: Date.now(),
-      imageData: imageData,
-      location: location || '',
-      description: description || '',
-      uploadDate: new Date().toISOString()
-    };
-    
-    // 添加到用戶資料中
-    photosData[username].push(newPhoto);
-    
-    // 儲存到文件
-    fs.writeFileSync(photosFile, JSON.stringify(photosData, null, 2));
-    
-    res.json({
-      success: true,
-      message: '圖片儲存成功',
-      photoId: newPhoto.id
-    });
-    
-  } catch (error) {
-    console.error('儲存圖片失敗:', error);
-    res.status(500).json({
-      success: false,
-      message: '伺服器錯誤'
-    });
-  }
+
+    try {
+      const photosFile = path.join('PData', 'user_photos.json');
+      let photosData: any = {};
+      
+      // 確保目錄存在
+      const dir = path.dirname(photosFile);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // 讀取現有資料
+      if (fs.existsSync(photosFile)) {
+        const data = fs.readFileSync(photosFile, 'utf-8');
+        photosData = JSON.parse(data);
+      }
+      
+      // 初始化用戶資料
+      if (!photosData[username]) {
+        photosData[username] = [];
+      }
+
+      // 生成新的檔案名
+      const fileExtension = path.extname(imageFile.originalFilename || '');
+      const newFileName = `${username}_${Date.now()}${fileExtension}`;
+      const newFilePath = path.join('uploads', 'user-photos', newFileName);
+      
+      // 移動檔案到新位置
+      fs.renameSync(imageFile.filepath, newFilePath);
+      
+      // 創建新的圖片記錄 (儲存檔案路徑而不是 Base64)
+      const newPhoto = {
+        id: Date.now(),
+        imagePath: `/uploads/user-photos/${newFileName}`, // 改為檔案路徑
+        originalName: imageFile.originalFilename,
+        location: location || '',
+        description: description || '',
+        uploadDate: new Date().toISOString()
+      };
+      
+      // 添加到用戶資料中
+      photosData[username].push(newPhoto);
+      
+      // 儲存到文件
+      fs.writeFileSync(photosFile, JSON.stringify(photosData, null, 2));
+      
+      res.json({
+        success: true,
+        message: '圖片儲存成功',
+        photoId: newPhoto.id,
+        filename: newFileName
+      });
+      
+    } catch (error) {
+      console.error('儲存圖片失敗:', error);
+      res.status(500).json({
+        success: false,
+        message: '伺服器錯誤'
+      });
+    }
+  });
 });
 
 // 用戶相冊 API - 獲取圖片
@@ -349,9 +462,21 @@ app.get('/api/user-photos/:username', (req, res) => {
     
     const userPhotos = photosData[username] || [];
     
+    // 兼容舊格式：將 imageData 轉換為 imagePath
+    const compatiblePhotos = userPhotos.map((photo: any) => {
+      if (photo.imageData && !photo.imagePath) {
+        // 舊格式 Base64 資料，保持原樣以維持兼容性
+        return {
+          ...photo,
+          imagePath: photo.imageData // 前端會判斷是 Base64 還是路徑
+        };
+      }
+      return photo;
+    });
+    
     res.json({
       success: true,
-      photos: userPhotos
+      photos: compatiblePhotos
     });
     
   } catch (error) {
@@ -387,7 +512,29 @@ app.delete('/api/user-photos/:username/:photoId', (req, res) => {
       });
     }
     
-    // 刪除指定的圖片
+    // 找到要刪除的照片
+    const photoToDelete = photosData[username].find((photo: any) => photo.id === parseInt(photoId));
+    
+    if (photoToDelete) {
+      // 如果是新格式（Formidable）的照片，刪除物理文件
+      if (photoToDelete.imagePath && !photoToDelete.imagePath.startsWith('data:')) {
+        // 構建完整的文件路徑
+        const fileName = path.basename(photoToDelete.imagePath);
+        const filePath = path.join('uploads', 'user-photos', fileName);
+        
+        // 嘗試刪除物理文件
+        if (fs.existsSync(filePath)) {
+          try {
+            fs.unlinkSync(filePath);
+            console.log(`已刪除物理文件: ${filePath}`);
+          } catch (fileError) {
+            console.error(`刪除物理文件失敗: ${filePath}`, fileError);
+          }
+        }
+      }
+    }
+    
+    // 從數據中刪除圖片記錄
     photosData[username] = photosData[username].filter((photo: any) => photo.id !== parseInt(photoId));
     
     // 儲存更新後的資料

@@ -180,7 +180,7 @@ function initializeAlbum(): void {
         });
     }
 
-    // Submit image button click handler - 整合服務器儲存
+    // Submit image button click handler - 使用 Formidable 文件上傳
     const submitImageButton = document.getElementById('submitImageButton') as HTMLButtonElement;
     if (submitImageButton) {
         submitImageButton.addEventListener('click', async function() {
@@ -189,55 +189,48 @@ function initializeAlbum(): void {
 
             if (fileInput.files && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                const reader = new FileReader();
+                const currentUser = getCurrentUser();
                 
-                reader.onload = async function(e: ProgressEvent<FileReader>) {
-                    if (!e.target?.result) return;
-                    
-                    const imageData = e.target.result as string;
-                    const currentUser = getCurrentUser();
-                    
-                    if (!currentUser) {
-                        alert('請先登入！');
-                        return;
-                    }
-                    
-                    try {
-                        // 儲存到服務器
-                        const response = await fetch('/api/user-photos', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                username: currentUser.username,
-                                imageData: imageData,
-                                location: `上傳於 ${new Date().toLocaleDateString('zh-TW')}`,
-                                description: `由 ${currentUser.username} 上傳`
-                            })
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (result.success) {
-                            // 在頁面上顯示圖片（保持現有HTML結構和CSS）
-                            displayPhoto(imageData, `上傳於 ${new Date().toLocaleDateString('zh-TW')}`, new Date().toISOString(), result.photoId);
-                            
-                            // 清空檔案輸入
-                            fileInput.value = '';
-                            uploadedImageData = null;
-                            
-                            alert('相片已成功儲存到您的相冊！');
-                        } else {
-                            alert('儲存失敗：' + result.message);
-                        }
-                    } catch (error) {
-                        console.error('儲存圖片時發生錯誤:', error);
-                        alert('網路錯誤，請稍後再試');
-                    }
-                };
+                if (!currentUser) {
+                    alert('請先登入！');
+                    return;
+                }
                 
-                reader.readAsDataURL(file);
+                try {
+                    // 創建 FormData 對象用於文件上傳
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('username', currentUser.username);
+                    formData.append('location', `上傳於 ${new Date().toLocaleDateString('zh-TW')}`);
+                    formData.append('description', `由 ${currentUser.username} 上傳`);
+                    
+                    // 使用 Formidable 上傳文件
+                    const response = await fetch('/api/user-photos', {
+                        method: 'POST',
+                        body: formData // 不設置 Content-Type，讓瀏覽器自動設置 multipart/form-data
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // 生成預覽圖片路徑（用於前端顯示）
+                        const imagePath = `/uploads/user-photos/${result.filename}`;
+                        
+                        // 在頁面上顯示圖片（保持現有HTML結構和CSS）
+                        displayPhoto(imagePath, `上傳於 ${new Date().toLocaleDateString('zh-TW')}`, new Date().toISOString(), result.photoId);
+                        
+                        // 清空檔案輸入
+                        fileInput.value = '';
+                        uploadedImageData = null;
+                        
+                        alert('相片已成功儲存到您的相冊！');
+                    } else {
+                        alert('儲存失敗：' + result.message);
+                    }
+                } catch (error) {
+                    console.error('儲存圖片時發生錯誤:', error);
+                    alert('網路錯誤，請稍後再試');
+                }
             } else {
                 alert('請先選擇一張圖片！');
             }
@@ -246,7 +239,7 @@ function initializeAlbum(): void {
 }
 
 // 顯示相片在網格中（保持現有HTML結構和CSS）
-async function displayPhoto(imageData: string, location: string, uploadDate: string, photoId: number): Promise<void> {
+async function displayPhoto(imagePath: string, location: string, uploadDate: string, photoId: number): Promise<void> {
     const photoGrid = document.getElementById('photoGrid') as HTMLElement;
     if (!photoGrid) return;
     
@@ -255,7 +248,14 @@ async function displayPhoto(imageData: string, location: string, uploadDate: str
     photoItem.dataset.photoId = photoId.toString();
 
     const img = document.createElement('img');
-    img.src = imageData;
+    // 判斷是舊格式 Base64 還是新格式文件路徑
+    if (imagePath.startsWith('data:')) {
+        // 舊格式 Base64
+        img.src = imagePath;
+    } else {
+        // 新格式文件路徑
+        img.src = imagePath;
+    }
 
     const title = document.createElement('div');
     title.classList.add('photo-title');
@@ -358,7 +358,8 @@ async function displayPhoto(imageData: string, location: string, uploadDate: str
                 const combinedData = {
                     x: mapClickData.x,
                     y: mapClickData.y,
-                    imageData: imageData,
+                    imagePath: imagePath,
+                    imageData: imagePath, // 向後兼容
                     location: location,
                     uploadDate: uploadDate,
                     photoId: photoId,
@@ -373,7 +374,8 @@ async function displayPhoto(imageData: string, location: string, uploadDate: str
             } else {
                 // 正常的相冊跳轉地圖流程
                 const mapFlagData = {
-                    imageData: imageData,
+                    imagePath: imagePath,
+                    imageData: imagePath, // 向後兼容
                     location: location,
                     uploadDate: uploadDate,
                     photoId: photoId,
@@ -453,9 +455,10 @@ async function loadUserPhotos(): Promise<void> {
                 photoGrid.innerHTML = '';
             }
             
-            // 重新載入所有照片
+            // 重新載入所有照片（支援舊格式和新格式）
             for (const photo of result.photos) {
-                await displayPhoto(photo.imageData, photo.location, photo.uploadDate, photo.id);
+                const imagePath = photo.imagePath || photo.imageData; // 兼容舊格式
+                await displayPhoto(imagePath, photo.location, photo.uploadDate, photo.id);
             }
             
             if (result.photos.length > 0) {

@@ -46,5 +46,11 @@
     "username": "boss",
     "email": "boss@YAHOO.COM",
     "password": "1234"
+  },
+  {
+    "id": 9,
+    "username": "JOHN",
+    "email": "JOHN@GMAIL.COM",
+    "password": "1234"
   }
 ]

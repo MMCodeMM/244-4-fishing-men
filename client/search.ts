@@ -45,7 +45,7 @@ async function searchByName() {
   `).join('');
 }
 
-// 處理圖片搜尋
+// 處理圖片搜尋 - 使用 Formidable 上傳
 async function handleImageSearch(event: Event) {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
@@ -64,20 +64,33 @@ async function handleImageSearch(event: Event) {
   // 顯示載入中
   resultDiv.innerHTML = `
     <div style="color:blue; text-align:center; padding:20px;">
-      <div>正在處理圖片...</div>
+      <div>正在上傳並分析圖片...</div>
       <div style="margin-top:10px;">檔案名稱: ${file.name}</div>
       <div>檔案大小: ${(file.size / 1024 / 1024).toFixed(2)} MB</div>
     </div>
   `;
   
   try {
-    // 顯示選中的圖片
-    const reader = new FileReader();
-    reader.onload = function(e) {
+    // 創建 FormData 進行文件上傳
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    // 上傳圖片到伺服器進行分析
+    const uploadResponse = await fetch('/api/search-image', {
+      method: 'POST',
+      body: formData
+    });
+    
+    const uploadResult = await uploadResponse.json();
+    
+    if (uploadResult.success) {
+      // 生成圖片預覽 URL
+      const imageUrl = `/uploads/search-images/${uploadResult.filename}`;
+      
       const imagePreview = `
         <div style="text-align:center; margin:20px; padding:20px; border:2px dashed #4CAF50; border-radius:10px; background-color:#f9f9f9;">
-          <h3 style="color:#2c3e50; margin-bottom:15px;">📸 已選擇的圖片</h3>
-          <img src="${e.target?.result}" alt="Selected Image" style="max-width:300px; max-height:300px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+          <h3 style="color:#2c3e50; margin-bottom:15px;">📸 已上傳的圖片</h3>
+          <img src="${imageUrl}" alt="Uploaded Image" style="max-width:300px; max-height:300px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
           <div style="margin-top:15px; padding:15px; background-color:white; border-radius:8px; color:#666;">
             <p style="margin:5px 0;"><strong>檔案名稱:</strong> ${file.name}</p>
             <p style="margin:5px 0;"><strong>檔案大小:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
@@ -88,16 +101,12 @@ async function handleImageSearch(event: Event) {
         </div>
       `;
       
-      // 暫時顯示所有魚種作為搜尋結果
-      showAllFishAsSearchResult(imagePreview);
-    };
-    
-    reader.onerror = function() {
-      console.error('FileReader error');
-      resultDiv.innerHTML = '<div style="color:red;">讀取圖片失敗，請重試</div>';
-    };
-    
-    reader.readAsDataURL(file);
+      // 顯示所有魚種作為搜尋結果
+      await showAllFishAsSearchResult(imagePreview);
+      
+    } else {
+      resultDiv.innerHTML = `<div style="color:red;">上傳失敗：${uploadResult.message}</div>`;
+    }
     
   } catch (error) {
     console.error('處理圖片時發生錯誤:', error);

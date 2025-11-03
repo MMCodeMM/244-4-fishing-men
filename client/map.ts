@@ -121,9 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.style.textAlign = 'center';
     modal.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
     
+    // 確定圖片來源：優先使用 imagePath，如果沒有則使用 imageData（兼容舊格式）
+    const imageSource = photoData.imagePath || photoData.imageData;
+    
     modal.innerHTML = `
       <h3 style="color: #2c3e50; margin-bottom: 20px;">📸 來自相冊的照片</h3>
-      <img src="${photoData.imageData}" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-bottom: 15px;">
+      <img src="${imageSource}" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-bottom: 15px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+      <div style="display: none; color: #e74c3c; text-align: center; margin-bottom: 15px;">❌ 圖片載入失敗</div>
       <p style="margin: 10px 0; color: #34495e;"><strong>位置：</strong>${photoData.location}</p>
       <p style="margin: 10px 0; color: #34495e;"><strong>上傳時間：</strong>${new Date(photoData.uploadDate).toLocaleString('zh-TW')}</p>
       <hr style="margin: 20px 0;">
