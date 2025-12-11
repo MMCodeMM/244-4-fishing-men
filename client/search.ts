@@ -87,6 +87,30 @@ async function handleImageSearch(event: Event) {
       // 生成圖片預覽 URL
       const imageUrl = `/uploads/search-images/${uploadResult.filename}`;
       
+      // 顯示 AI 識別結果
+      let aiResultHTML = '';
+      if (uploadResult.aiEnabled && uploadResult.aiPredictions) {
+        aiResultHTML = `
+          <div style="margin-top:15px; padding:15px; background-color:#e8f5e9; border-radius:8px; border-left:4px solid #4CAF50;">
+            <h4 style="color:#2e7d32; margin:0 0 10px 0;">🤖 AI 識別結果</h4>
+            ${uploadResult.aiPredictions.map((pred: any, index: number) => `
+              <div style="padding:8px; margin:5px 0; background-color:white; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:${index === 0 ? 'bold' : 'normal'}; color:#2c3e50;">
+                  ${index + 1}. ${pred.name} (${pred.nameEn})
+                </span>
+                <span style="color:#4CAF50; font-weight:bold;">${pred.confidence}%</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        aiResultHTML = `
+          <div style="margin-top:15px; padding:15px; background-color:#fff3cd; border-radius:8px; border-left:4px solid #ffc107;">
+            <p style="color:#856404; margin:0;">⚠️ AI 識別暫時不可用，顯示所有魚種供參考</p>
+          </div>
+        `;
+      }
+      
       const imagePreview = `
         <div style="text-align:center; margin:20px; padding:20px; border:2px dashed #4CAF50; border-radius:10px; background-color:#f9f9f9;">
           <h3 style="color:#2c3e50; margin-bottom:15px;">📸 已上傳的圖片</h3>
@@ -94,15 +118,13 @@ async function handleImageSearch(event: Event) {
           <div style="margin-top:15px; padding:15px; background-color:white; border-radius:8px; color:#666;">
             <p style="margin:5px 0;"><strong>檔案名稱:</strong> ${file.name}</p>
             <p style="margin:5px 0;"><strong>檔案大小:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
-            <hr style="margin:15px 0;">
-            <p style="color:#e67e22; font-weight:bold;">🔍 智能圖片識別功能開發中...</p>
-            <p style="color:#27ae60;">目前顯示所有魚種供您參考比對：</p>
+            ${aiResultHTML}
           </div>
         </div>
       `;
       
-      // 顯示所有魚種作為搜尋結果
-      await showAllFishAsSearchResult(imagePreview);
+      // 顯示搜尋結果（AI 匹配的魚種或所有魚種）
+      await showSearchResults(imagePreview, uploadResult.searchResults || []);
       
     } else {
       resultDiv.innerHTML = `<div style="color:red;">上傳失敗：${uploadResult.message}</div>`;
@@ -114,18 +136,19 @@ async function handleImageSearch(event: Event) {
   }
 }
 
-// 暫時顯示所有魚種作為搜尋結果
-async function showAllFishAsSearchResult(imagePreview: string) {
+// 顯示搜尋結果（AI 匹配的魚種或所有魚種）
+async function showSearchResults(imagePreview: string, fishList: any[]) {
   const resultDiv = document.getElementById('searchResult') as HTMLElement;
   
   try {
-    const res = await fetch('/api/fish');
-    
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+    // 如果沒有提供魚種列表，從 API 獲取所有魚種
+    if (!fishList || fishList.length === 0) {
+      const res = await fetch('/api/fish');
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      fishList = await res.json();
     }
-    
-    const fishList = await res.json();
     
     const allFishHTML = fishList.map((fish: any, index: number) => `
       <div style="display:inline-block; text-align:center; border:2px solid #3498db; border-radius:12px; padding:20px; margin:15px; box-shadow:0 4px 15px rgba(52, 152, 219, 0.2); background-color:white; max-width:280px; cursor:pointer; transition:all 0.3s ease;" 

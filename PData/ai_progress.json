@@ -1,0 +1,74 @@
+{
+  "lastUpdated": "2025-12-07T10:12:37.702Z",
+  "currentStage": "stage0_check",
+  "stages": {
+    "stage0_check": {
+      "status": "completed",
+      "progress": 100,
+      "completedAt": "2025-11-30T07:20:02.547Z"
+    },
+    "stage1_crawling": {
+      "status": "pending",
+      "progress": 284,
+      "fishProgress": [
+        {
+          "name": "紅衫",
+          "status": "completed",
+          "downloadedCount": 300,
+          "targetCount": 300,
+          "lastUpdated": "2025-11-30T11:50:52.445Z"
+        },
+        {
+          "name": "鯉魚",
+          "status": "completed",
+          "downloadedCount": 300,
+          "targetCount": 300,
+          "lastUpdated": "2025-11-30T12:02:08.387Z"
+        },
+        {
+          "name": "鯧魚",
+          "status": "completed",
+          "downloadedCount": 300,
+          "targetCount": 300,
+          "lastUpdated": "2025-11-30T12:18:23.325Z"
+        },
+        {
+          "name": "九肚魚",
+          "status": "partial",
+          "downloadedCount": 393,
+          "targetCount": 500,
+          "lastUpdated": "2025-12-07T09:20:33.993Z"
+        },
+        {
+          "name": "烏頭",
+          "status": "pending",
+          "downloadedCount": 0,
+          "targetCount": 100
+        },
+        {
+          "name": "馬頭",
+          "status": "partial",
+          "downloadedCount": 410,
+          "targetCount": 500,
+          "lastUpdated": "2025-12-07T10:12:37.702Z"
+        }
+      ],
+      "totalImages": 1703,
+      "targetImages": 600
+    },
+    "stage2_review": {
+      "status": "pending",
+      "progress": 0
+    },
+    "stage3_training": {
+      "status": "pending",
+      "progress": 0
+    },
+    "stage4_integration": {
+      "status": "pending",
+      "progress": 0
+    }
+  },
+  "canResume": true,
+  "nextAction": "npm run ai:check"
+}

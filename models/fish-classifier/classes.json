@@ -1,0 +1,32 @@
+[
+  {
+    "index": 0,
+    "name": "紅衫",
+    "englishName": "Red Snapper"
+  },
+  {
+    "index": 1,
+    "name": "鯉魚",
+    "englishName": "Common Carp"
+  },
+  {
+    "index": 2,
+    "name": "鯧魚",
+    "englishName": "Pomfret"
+  },
+  {
+    "index": 3,
+    "name": "九肚魚",
+    "englishName": "Bombay Duck"
+  },
+  {
+    "index": 4,
+    "name": "木棉魚",
+    "englishName": "Bigeye"
+  },
+  {
+    "index": 5,
+    "name": "馬頭",
+    "englishName": "Horsehead"
+  }
+]

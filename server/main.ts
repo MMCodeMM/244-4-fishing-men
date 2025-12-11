@@ -7,6 +7,7 @@ import path from 'path'
 import { router as userRouter } from './user'
 import { mkdirSync} from 'fs'
 import formidable, { IncomingForm } from 'formidable'
+import { fishClassifier } from './ai/ai-service'
 
 mkdirSync('PData', { recursive: true });
 mkdirSync('uploads', { recursive: true });
@@ -77,33 +78,77 @@ app.post('/api/search-image', (req, res) => {
       });
     }
 
-    try {
-      // 生成唯一文件名
-      const timestamp = Date.now();
-      const originalName = file.originalFilename || 'search_image';
-      const extension = path.extname(originalName);
-      const newFilename = `search_${timestamp}${extension}`;
-      const newFilepath = path.join(path.dirname(file.filepath), newFilename);
+    async function processImage() {
+      try {
+        if (!file) {
+          throw new Error('文件不存在');
+        }
+        
+        // 生成唯一文件名
+        const timestamp = Date.now();
+        const originalName = file.originalFilename || 'search_image';
+        const extension = path.extname(originalName);
+        const newFilename = `search_${timestamp}${extension}`;
+        const newFilepath = path.join(path.dirname(file.filepath), newFilename);
 
-      // 重命名文件
-      fs.renameSync(file.filepath, newFilepath);
+        // 重命名文件
+        fs.renameSync(file.filepath, newFilepath);
 
-      // 這裡將來可以添加 AI 圖片識別邏輯
-      // 目前返回成功狀態，讓前端顯示所有魚種
-      res.json({
-        success: true,
-        filename: newFilename,
-        message: '圖片已接收，正在分析中...',
-        searchResults: 'all_fish' // 標記返回所有魚種
-      });
+        // 使用 AI 識別魚種
+        try {
+          console.log('🔍 開始 AI 識別...');
+          const predictions = await fishClassifier.predict(newFilepath);
+          
+          // 取前 3 個最可能的結果
+          const topPredictions = predictions.slice(0, 3);
+          
+          console.log('✅ AI 識別完成:', topPredictions.map(p => 
+            `${p.fishName} (${(p.confidence * 100).toFixed(1)}%)`
+          ).join(', '));
 
-    } catch (error) {
-      console.error('處理搜尋圖片失敗:', error);
-      res.status(500).json({
-        success: false,
-        message: '處理圖片時發生錯誤'
-      });
+          // 根據識別結果篩選魚種
+          const matchedFish = fishs.filter(fish => 
+            topPredictions.some(p => 
+              fish.name.includes(p.fishName) || 
+              fish.name.includes(p.englishName)
+            )
+          );
+
+          res.json({
+            success: true,
+            filename: newFilename,
+            message: `AI 識別完成！最可能是：${topPredictions[0].fishName}`,
+            aiPredictions: topPredictions.map(p => ({
+              name: p.fishName,
+              nameEn: p.englishName,
+              confidence: Math.round(p.confidence * 100)
+            })),
+            searchResults: matchedFish.length > 0 ? matchedFish : fishs,
+            aiEnabled: true
+          });
+
+        } catch (aiError) {
+          console.warn('⚠️  AI 識別失敗，返回所有魚種:', aiError);
+          // AI 失敗時返回所有魚種
+          res.json({
+            success: true,
+            filename: newFilename,
+            message: '圖片已接收（AI 暫不可用）',
+            searchResults: fishs,
+            aiEnabled: false
+          });
+        }
+
+      } catch (error) {
+        console.error('處理搜尋圖片失敗:', error);
+        res.status(500).json({
+          success: false,
+          message: '處理圖片時發生錯誤'
+        });
+      }
     }
+    
+    processImage();
   });
 });
 app.use(express.json())
@@ -585,8 +630,30 @@ app.get('/', (req, res) => {
 
 let port = 3000
 
-app.listen(port, () => {
-  console.log('Server starting...');
-  print(port)
-})
+// 初始化 AI 模型並啟動服務器
+async function startServer() {
+  console.log('🚀 正在啟動服務器...');
+  
+  // 初始化 AI 模型
+  await fishClassifier.initialize();
+  
+  app.listen(port, () => {
+    console.log('✅ 服務器已啟動');
+    print(port);
+    
+    // 顯示 AI 狀態
+    const aiStatus = fishClassifier.getStatus();
+    if (aiStatus.ready) {
+      console.log('🤖 AI 魚類識別: 已啟用');
+      console.log(`📊 識別類別: ${aiStatus.classes} 種魚`);
+    } else {
+      console.log('⚠️  AI 魚類識別: 未啟用');
+    }
+  });
+}
+
+startServer().catch(err => {
+  console.error('❌ 服務器啟動失敗:', err);
+  process.exit(1);
+});
 

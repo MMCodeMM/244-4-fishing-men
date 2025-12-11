@@ -1,0 +1,22 @@
+
+> 244-4-fishing-men@1.0.0 serve
+> ts-node-dev server/main.ts
+
+[INFO] 19:55:43 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+2025-12-11 19:55:46.114738: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Loading fish.json from: C:\Users\85292\DAE it 2025 personal\dae-it-2025\244-4-fishing-men\server\fish.json
+Loaded 12 fish entries
+First fish description preview: 九肚魚（Bombay Buck）又稱印度魷魚，肉質細嫩軟滑、多骨但鮮美，常見於粵式椒鹽料理，酥炸後外脆內嫩，風味獨特。
+🚀 正在啟動服務器...
+🤖 載入 AI 模型...
+✅ AI 模型已就緒
+📊 識別類別: 紅衫, 鯉魚, 鯧魚, 九肚魚, 木棉魚, 馬頭
+✅ 服務器已啟動
+listening on http://localhost:3000
+listening on http://192.168.50.151:3000 (Wi-Fi)
+listening on http://127.0.0.1:3000 (Loopback Pseudo-Interface 1)
+🤖 AI 魚類識別: 已啟用
+📊 識別類別: 6 種魚
+🔍 開始 AI 識別...
+✅ AI 識別完成: 紅衫 (52.6%), 馬頭 (20.5%), 九肚魚 (11.8%)
